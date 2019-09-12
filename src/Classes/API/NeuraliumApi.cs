@@ -112,7 +112,7 @@ namespace Neuralium.Cli.Classes.API {
 			return result != null;
 		}
 		
-		private async Task InvokeLongRunningMethod(string operation, IEnumerable<object> parameters) {
+		private async Task<int> InvokeLongRunningMethod(string operation, IEnumerable<object> parameters) {
 			if(this.useMode == NeuraliumApi.UseModes.SendOnly) {
 				throw new NoLongRunningException();
 			}
@@ -124,6 +124,7 @@ namespace Neuralium.Cli.Classes.API {
 
 			this.longRunningTasks.Add(correlationId, null);
 
+			return correlationId;
 		}
 
 		protected string GetCallingMethodName([CallerMemberName] string caller = null) {
@@ -242,6 +243,10 @@ namespace Neuralium.Cli.Classes.API {
 			return (bool)await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[0]);
 		}
 
+		public async Task<object> QueryBlockChainInfo() {
+			return await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[]{chainType});
+		}
+
 		public async Task<int> PublishAccount(string accountUuId) {
 			return (int)await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[]{accountUuId});
 		}
@@ -304,8 +309,8 @@ namespace Neuralium.Cli.Classes.API {
 			return this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {chainType});
 		}
 
-		public async Task CreateNewWallet(string accountName, bool encrypt, bool encryptKeys) {
-			await this.InvokeLongRunningMethod(this.GetCallingMethodName(), new object[] {chainType, accountName, encrypt, encryptKeys});
+		public async Task<int> CreateNewWallet(string accountName, bool encryptWallet, bool encryptKey, bool encryptKeysIndividually, Dictionary<int, string> passphrases, bool publishAccount) {
+			return await this.InvokeLongRunningMethod(this.GetCallingMethodName(), new object[] {chainType, accountName, encryptWallet, encryptKey, encryptKeysIndividually, passphrases, publishAccount});
 		}
 
 		public Task<List<object>> QueryWalletTransactionHistory(Guid accountUuid) {

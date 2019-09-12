@@ -16,13 +16,15 @@ namespace Neuralium.Cli.Classes.API {
 		Task<bool> IsWalletLoaded();
 		Task LoadWallet();
 		Task<bool> WalletExists();
-		Task CreateNewWallet(string accountName, bool encrypt, bool encryptKeys);
 		Task<bool> CompleteLongRunningEvent(int correlationId, object data);
 		Task<bool> RenewLongRunningEvent(int correlationId);
 		Task Test();
 		Task<bool> Ping();
 		Task<bool> Shutdown();
 
+		Task<object> QueryBlockChainInfo();
+		Task<int> CreateNewWallet(string accountName, bool encryptWallet, bool encryptKey, bool encryptKeysIndividually, Dictionary<int, string> passphrases, bool publishAccount);
+		
 		Task<int> PublishAccount(string accountUuId);
 
 		Task StartMining(string delegateAccountId);

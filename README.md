@@ -16,6 +16,18 @@ Run individual commands:
 
 Neuralium.Cli query Ping
 
+
+Neuralium.Cli query QueryBlockChainInfo
+
+Neuralium.Cli query IsWalletLoaded
+
+Neuralium.Cli query WalletExists
+
+Neuralium.Cli query LoadWallet
+
+Neuralium.Cli query CreateNewWallet "account name" false, false, false
+
+
 Neuralium.Cli query QueryBlock 108
 
 Neuralium.Cli query QueryWalletAccounts
