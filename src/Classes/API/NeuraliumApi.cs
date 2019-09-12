@@ -105,6 +105,14 @@ namespace Neuralium.Cli.Classes.API {
 						result = guid;
 					}
 				}
+				else if(type == typeof(string)) {
+					result = serialized;
+				}
+				else if(type == typeof(bool)) {
+					if(bool.TryParse(serialized, out bool guid)) {
+						result = guid;
+					}
+				}
 			} catch(Exception ex) {
 				Log.Error(ex, $"Failed to serialize parameter value '{serialized}'");
 			}
@@ -114,7 +122,7 @@ namespace Neuralium.Cli.Classes.API {
 		
 		private async Task<int> InvokeLongRunningMethod(string operation, IEnumerable<object> parameters) {
 			if(this.useMode == NeuraliumApi.UseModes.SendOnly) {
-				throw new NoLongRunningException();
+				Log.Warning("We are in send only mode. Correlation events will not be captured");
 			}
 
 			Log.Information($"invoking long running method {operation}");

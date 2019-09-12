@@ -25,7 +25,7 @@ Neuralium.Cli query WalletExists
 
 Neuralium.Cli query LoadWallet
 
-Neuralium.Cli query CreateNewWallet "account name" false, false, false
+Neuralium.Cli query CreateNewWallet "account name" false false false
 
 
 Neuralium.Cli query QueryBlock 108
