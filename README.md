@@ -19,9 +19,11 @@ Neuralium.Cli query Ping
 Neuralium.Cli query QueryBlock 108
 
 Neuralium.Cli query QueryWalletAccounts
+
 Neuralium.Cli query QueryAccountTotalNeuraliums "016d2570-7b0a-44dd-b410-bb479776d6c2"
 
 Neuralium.Cli query StartMining
+
 Neuralium.Cli query StopMining
 
 Neuralium.Cli query Shutdown
