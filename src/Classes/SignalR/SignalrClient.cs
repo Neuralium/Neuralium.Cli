@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
 using Neuralium.Cli.Classes.API;
 using Neuralium.Cli.Classes.Runtime;
 using Serilog;
@@ -15,7 +16,7 @@ namespace Neuralium.Cli.Classes.SignalR {
 		private readonly HubConnection connection;
 
 		public SignalrClient(AppSettings appSettings) {
-			this.connection = new HubConnectionBuilder().WithUrl(new UriBuilder(appSettings.UseTls ? "https" : "http", appSettings.ServerDNS, appSettings.RpcPort, "signal").ToString()).Build();
+			this.connection = new HubConnectionBuilder().WithUrl(new UriBuilder(appSettings.UseTls ? "https" : "http", appSettings.ServerDNS, appSettings.RpcPort, "signal").ToString()).AddMessagePackProtocol().Build();
 
 			this.connection.Closed += async error => {
 				await Task.Delay(new Random().Next(0, 5) * 1000);
