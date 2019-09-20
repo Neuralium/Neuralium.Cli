@@ -20,6 +20,7 @@
     <PackageReference Include="Neuralia.STUN" Version="1.0.0" />
     <PackageReference Include="Neuralia.Data.HashFunction.xxHash" Version="1.0.0" />
 
+        <PackageReference Include="MessagePack.ImmutableCollection" Version="1.7.3.7" />
          <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
         <PackageReference Include="CommandLineParser" Version="2.6.0" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.1.0" />

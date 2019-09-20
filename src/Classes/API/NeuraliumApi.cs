@@ -256,15 +256,15 @@ namespace Neuralium.Cli.Classes.API {
 		}
 
 		public async Task<int> PublishAccount(string accountUuId) {
-			return (int)await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[]{accountUuId});
+			return (int)await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[]{chainType, accountUuId});
 		}
 
 		public async Task StartMining(string delegateAccountId) {
-			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {delegateAccountId});
+			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {chainType, delegateAccountId});
 		}
 
 		public async Task StopMining() {
-			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[0]);
+			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[]{chainType});
 		}
 
 		public async Task<string> QueryBlock(long blockId) {

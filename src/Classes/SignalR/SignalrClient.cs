@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MessagePack.ImmutableCollection;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Neuralium.Cli.Classes.API;
@@ -16,7 +17,15 @@ namespace Neuralium.Cli.Classes.SignalR {
 		private readonly HubConnection connection;
 
 		public SignalrClient(AppSettings appSettings) {
-			this.connection = new HubConnectionBuilder().WithUrl(new UriBuilder(appSettings.UseTls ? "https" : "http", appSettings.ServerDNS, appSettings.RpcPort, "signal").ToString()).AddMessagePackProtocol().Build();
+			this.connection = new HubConnectionBuilder().WithUrl(new UriBuilder(appSettings.UseTls ? "https" : "http", appSettings.ServerDNS, appSettings.RpcPort, "signal").ToString())
+					
+				.AddMessagePackProtocol(options => {
+					options.FormatterResolvers = new List<MessagePack.IFormatterResolver>()
+					{
+						ImmutableCollectionResolver.Instance,
+						MessagePack.Resolvers.StandardResolver.Instance
+					};
+				}).Build();
 
 			this.connection.Closed += async error => {
 				await Task.Delay(new Random().Next(0, 5) * 1000);
