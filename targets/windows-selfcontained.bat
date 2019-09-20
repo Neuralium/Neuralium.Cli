@@ -1,7 +1,7 @@
 
 cd ../
 
-dotnet restore
+dotnet restore --no-cache
 
 
 dotnet publish --self-contained -c Release -o ../build -r win-x64

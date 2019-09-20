@@ -2,7 +2,7 @@
 
 cd ../
 
-dotnet restore
+dotnet restore --no-cache
 
 
 if  dotnet publish --self-contained -c Release -o ../build -r osx-x64 ; then
