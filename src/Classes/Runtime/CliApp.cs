@@ -17,7 +17,7 @@ namespace Neuralium.Cli.Classes.Runtime {
 
 		private readonly API api;
 
-		protected readonly IApplicationLifetime applicationLifetime;
+		protected readonly IHostApplicationLifetime applicationLifetime;
 
 		protected readonly AppSettings appSettings;
 
@@ -27,7 +27,7 @@ namespace Neuralium.Cli.Classes.Runtime {
 		private bool processing;
 		private bool quitting;
 
-		public CliApp(IServiceProvider serviceProvider, IApplicationLifetime applicationLifetime, IOptions<AppSettings> appSettings, InteractiveOptions moderatorInteractiveOptions) {
+		public CliApp(IServiceProvider serviceProvider, IHostApplicationLifetime applicationLifetime, IOptions<AppSettings> appSettings, InteractiveOptions moderatorInteractiveOptions) {
 
 			this.appSettings = appSettings.Value;
 			this.CmdModeratorInteractiveOptions = moderatorInteractiveOptions;
@@ -58,20 +58,13 @@ namespace Neuralium.Cli.Classes.Runtime {
 			this.applicationLifetime.StopApplication();
 		}
 
-		protected override async void DisposeAll(bool disposing) {
-
+		protected override async void DisposeAll() {
+			
 			try {
+				await this.api.Disconnect();
 
-				try {
-					if(disposing) {
-						await this.api.Disconnect();
-					}
-
-				} catch(Exception ex) {
-					Console.WriteLine(ex);
-				}
 			} catch(Exception ex) {
-				Log.Error(ex, "failed to dispose of app server");
+				Console.WriteLine(ex);
 			}
 		}
 	}

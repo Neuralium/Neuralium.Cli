@@ -11,11 +11,11 @@ namespace Neuralium.Cli.Classes.Runtime {
 
 	public class CliService : ICliService {
 
-		protected readonly IApplicationLifetime ApplicationLifetime;
+		protected readonly IHostApplicationLifetime ApplicationLifetime;
 
 		protected readonly ICliApp cliApp;
 
-		public CliService(IApplicationLifetime ApplicationLifetime, ICliApp cliApp) {
+		public CliService(IHostApplicationLifetime ApplicationLifetime, ICliApp cliApp) {
 
 			this.ApplicationLifetime = ApplicationLifetime;
 			this.cliApp = cliApp;
@@ -83,10 +83,9 @@ namespace Neuralium.Cli.Classes.Runtime {
 
 				} catch(Exception ex) {
 					Log.Error(ex, "failed to dispose of Neuralium service");
-				} finally {
-					this.IsDisposed = true;
-				}
+				} 
 			}
+			this.IsDisposed = true;
 		}
 
 		~CliService() {

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using MessagePack.ImmutableCollection;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Neuralium.Cli.Classes.API;
@@ -10,22 +12,15 @@ using Neuralium.Cli.Classes.Runtime;
 using Serilog;
 
 namespace Neuralium.Cli.Classes.SignalR {
-
-	//https: //docs.microsoft.com/en-us/aspnet/core/signalr/dotnet-client?view=aspnetcore-2.1
-
+	
 	public class SignalrClient {
 		private readonly HubConnection connection;
 
 		public SignalrClient(AppSettings appSettings) {
-			this.connection = new HubConnectionBuilder().WithUrl(new UriBuilder(appSettings.UseTls ? "https" : "http", appSettings.ServerDNS, appSettings.RpcPort, "signal").ToString())
-					
-				.AddMessagePackProtocol(options => {
-					options.FormatterResolvers = new List<MessagePack.IFormatterResolver>()
-					{
-						ImmutableCollectionResolver.Instance,
-						MessagePack.Resolvers.StandardResolver.Instance
-					};
-				}).Build();
+			this.connection = new HubConnectionBuilder().WithUrl(new UriBuilder(appSettings.UseTls ? "https" : "http", appSettings.ServerDNS, appSettings.RpcPort, "signal").ToString()).WithAutomaticReconnect().AddJsonProtocol(options =>
+			{
+				options.PayloadSerializerOptions.WriteIndented = false;
+			}).Build();
 
 			this.connection.Closed += async error => {
 				await Task.Delay(new Random().Next(0, 5) * 1000);
@@ -67,7 +62,11 @@ namespace Neuralium.Cli.Classes.SignalR {
 		public async Task<T> InvokeMethod<T>(string operation, IEnumerable<object> parameters) {
 
 			try {
+				//careful: object will return JsonElement
 				return (T) await this.connection.InvokeCoreAsync(operation, typeof(T), parameters.ToArray());
+
+
+
 			} catch(Exception ex) {
 				Log.Logger.Error($"failed to invoke method {operation}", ex);
 

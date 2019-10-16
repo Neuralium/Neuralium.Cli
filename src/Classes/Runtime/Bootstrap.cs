@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Neuralium.Cli.Classes.API;
-using Newtonsoft.Json;
+
 using Newtonsoft.Json.Converters;
 using Serilog;
 
@@ -58,11 +58,6 @@ namespace Neuralium.Cli.Classes.Runtime {
 				this.BuildConfiguration(hostingContext, configApp);
 			}).ConfigureServices((hostContext, services) => {
 				services.AddOptions<HostOptions>().Configure(opts => opts.ShutdownTimeout = TimeSpan.FromSeconds(10));
-
-				services.Configure<MvcJsonOptions>(options => {
-					options.SerializerSettings.Converters.Add(new StringEnumConverter());
-					options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-				});
 
 				string configSection = "AppSettings";
 

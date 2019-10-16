@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Neuralium.Cli.Classes.Runtime;
 using Neuralium.Cli.Classes.SignalR;
-using Newtonsoft.Json;
 using Serilog;
 
 namespace Neuralium.Cli.Classes.API {
@@ -73,7 +74,7 @@ namespace Neuralium.Cli.Classes.API {
 			for(int i = 0; i < methodParameters.Length; i++) {
 				if(stringParameters.Length > i) {
 					if(!this.DeserializeParameter(stringParameters[i], parameterInfos[i].ParameterType, out methodParameters[i])) {
-						methodParameters[i] = JsonConvert.DeserializeObject(stringParameters[i], parameterInfos[i].ParameterType);
+						methodParameters[i] = JsonSerializer.Deserialize(stringParameters[i], parameterInfos[i].ParameterType);
 					}
 				}
 			}
@@ -89,10 +90,10 @@ namespace Neuralium.Cli.Classes.API {
 			Type taskType = task.GetType();
 
 			if(task.GetType().IsGenericType) {
-				result = taskType.GetProperty("Result").GetValue(task);
+				result = taskType.GetProperty("Result")?.GetValue(task);
 			} 
-
-			return result == null ? "" : JsonConvert.SerializeObject(result, Formatting.Indented);
+			
+			return result == null ? "" : JsonSerializer.Serialize(result, new JsonSerializerOptions(){WriteIndented = true});
 		}
 
 		private bool DeserializeParameter(string serialized, Type type, out object result) {
@@ -242,13 +243,13 @@ namespace Neuralium.Cli.Classes.API {
 		}
 
 		public async Task<bool> Ping() {
-			object result = await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new string[0]);
+			string result = await this.signalrClient.InvokeMethod<string>(this.GetCallingMethodName(), new string[0]);
 
 			return result.ToString() == "pong";
 		}
 
 		public async Task<bool> Shutdown() {
-			return (bool)await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[0]);
+			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[0]);
 		}
 
 		public async Task<object> QueryBlockChainInfo() {
@@ -256,7 +257,7 @@ namespace Neuralium.Cli.Classes.API {
 		}
 
 		public async Task<int> PublishAccount(string accountUuId) {
-			return (int)await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[]{chainType, accountUuId});
+			return await this.signalrClient.InvokeMethod<int>(this.GetCallingMethodName(), new object[]{chainType, accountUuId});
 		}
 
 		public async Task StartMining(string delegateAccountId) {
@@ -267,12 +268,16 @@ namespace Neuralium.Cli.Classes.API {
 			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[]{chainType});
 		}
 
+		public async Task<object> QueryElectionContext(long blockId) {
+			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {chainType, blockId});
+		}
+		
 		public async Task<string> QueryBlock(long blockId) {
-			return (string)await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {chainType, blockId});
+			return await this.signalrClient.InvokeMethod<string>(this.GetCallingMethodName(), new object[] {chainType, blockId});
 		}
 
 		public async Task<byte[]> QueryCompressedBlock(long blockId) {
-			return (byte[])await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {chainType, blockId});
+			return await this.signalrClient.InvokeMethod<byte[]>(this.GetCallingMethodName(), new object[] {chainType, blockId});
 		}
 
 		public async Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase) {
@@ -331,6 +336,10 @@ namespace Neuralium.Cli.Classes.API {
 
 		public async Task PresentAccountPublicly() {
 			await this.InvokeLongRunningMethod(this.GetCallingMethodName(), new object[] {chainType});
+		}
+
+		public Task<List<object>> QueryBlockBinaryTransactions(long blockId) {
+			return this.signalrClient.InvokeMethod<List<object>>(this.GetCallingMethodName(), new object[] {chainType, blockId});
 		}
 
 	#endregion
