@@ -36,6 +36,8 @@ Neuralium.Cli query QueryAccountTotalNeuraliums "016d2570-7b0a-44dd-b410-bb47977
 
 Neuralium.Cli query PublishAccount "016d4f5a-c134-4141-8e35-3278b9baed67"
 
+Neuralium.Cli query SendNeuraliums "{SF}" 10.11 0.5 "some note"
+
 Neuralium.Cli query StartMining
 
 Neuralium.Cli query StopMining

@@ -280,6 +280,10 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod<byte[]>(this.GetCallingMethodName(), new object[] {chainType, blockId});
 		}
 
+		public async Task<int> SendNeuraliums(string targetAccountId, decimal amount, decimal tip, string note) {
+			return await this.signalrClient.InvokeMethod<int>(this.GetCallingMethodName(), new object[] {chainType, targetAccountId, amount, tip, note});
+		}
+
 		public async Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase) {
 			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {correlationId, chainType, keyCorrelationCode, passphrase});
 

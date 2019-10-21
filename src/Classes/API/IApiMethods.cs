@@ -36,6 +36,7 @@ namespace Neuralium.Cli.Classes.API {
 		Task<string> QueryBlock(long blockId);
 
 		Task<byte[]> QueryCompressedBlock(long blockId);
+		Task<int> SendNeuraliums(string targetAccountId, decimal amount, decimal tip, string note);
 
 
 			Task<List<object>> QueryWalletTransactionHistory(Guid accountUuid);
