@@ -9,7 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Neuralium.Cli.Classes.API;
 
-using Newtonsoft.Json.Converters;
 using Serilog;
 
 namespace Neuralium.Cli.Classes.Runtime {

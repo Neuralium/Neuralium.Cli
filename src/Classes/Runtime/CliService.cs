@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace Neuralium.Cli.Classes.Runtime {
-	public interface ICliService : IHostedService, IDisposable2 {
+	public interface ICliService : IHostedService, IDisposableExtended {
 	}
 
 	public class CliService : ICliService {
