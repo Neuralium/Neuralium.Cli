@@ -4,10 +4,10 @@
         <PlatformTarget>AnyCPU</PlatformTarget>
         <OutputType>Exe</OutputType>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <LangVersion>latest</LangVersion>
         <RootNamespace>Neuralium.Cli</RootNamespace>
-        <AssemblyName>Neuralium.Cli</AssemblyName>
+        <AssemblyName>neuraliumcli</AssemblyName>
         <Deterministic>false</Deterministic>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -24,11 +24,11 @@
     <PackageReference Include="Neuralia.STUN" Version="1.0.0" />
     <PackageReference Include="Neuralia.Data.HashFunction.xxHash" Version="1.0.0" />
 
-        <PackageReference Include="CommandLineParser" Version="2.6.0" />
-        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.0.0" />
-        <PackageReference Include="morelinq" Version="3.2.0" />
+       <PackageReference Include="CommandLineParser" Version="2.7.82" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.1.1" />
+        <PackageReference Include="morelinq" Version="3.3.2" />
         <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
-        <PackageReference Include="Serilog.Exceptions" Version="5.3.1" />
+        <PackageReference Include="Serilog.Exceptions" Version="5.4.0" />
         <PackageReference Include="Serilog.Extensions.Hosting" Version="3.0.0" />
         <PackageReference Include="Serilog.Settings.AppSettings" Version="2.2.2" />
         <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
@@ -46,8 +46,5 @@
     <Target Name="CopyCustomContent2" AfterTargets="AfterBuild">
         <Copy SourceFiles="config.json" DestinationFolder="$(OutputPath)" />
     </Target>
-    <PropertyGroup Condition="'$(SolutionDir)' == '' or&#xA;                     '$(SolutionDir)' == '*undefined*'">
-    <SolutionDir>..\</SolutionDir>
-  </PropertyGroup>
-  <Import Project="$(SolutionDir)CommonSettings.targets" />
+    <Import Project="$(MSBuildProjectDirectory)/../CommonSettings.targets" />
 </Project>

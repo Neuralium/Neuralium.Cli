@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -16,8 +17,20 @@ namespace Neuralium.Cli.Classes.SignalR {
 	public class SignalrClient {
 		private readonly HubConnection connection;
 
-		public SignalrClient(AppSettings appSettings) {
-			this.connection = new HubConnectionBuilder().WithUrl(new UriBuilder(appSettings.UseTls ? "https" : "http", appSettings.ServerDNS, appSettings.RpcPort, "signal").ToString()).WithAutomaticReconnect().AddJsonProtocol(options =>
+		public SignalrClient(AppSettings appSettings, OptionsBase options) {
+
+			string host = appSettings.Host;
+			int port = appSettings.RpcPort;
+			
+			if(!string.IsNullOrWhiteSpace(options.Host)) {
+				host = options.Host;
+			}
+
+			if(options.Port.HasValue) {
+				port = options.Port.Value;
+			}
+
+			this.connection = new HubConnectionBuilder().WithUrl(new UriBuilder(appSettings.UseTls ? "https" : "http", host, port, "signal").ToString()).WithAutomaticReconnect().AddJsonProtocol(options =>
 			{
 				options.PayloadSerializerOptions.WriteIndented = false;
 			}).Build();
@@ -29,7 +42,7 @@ namespace Neuralium.Cli.Classes.SignalR {
 
 		}
 
-		public SignalrClient(AppSettings appSettings, IApiEvents eventHandler) : this(appSettings) {
+		public SignalrClient(AppSettings appSettings, OptionsBase options, IApiEvents eventHandler) : this(appSettings, options) {
 
 			// make sure we can receive events
 			this.RegisterEvents(eventHandler);

@@ -1,58 +1,93 @@
-# Neuralium.Cli
+# neuraliumcli
 
-##### Version Trial run IV
+##### Version Release Candidate I
 
 The Neuralium crypto token console remote API 
 
 ## Usage instructions.
 
-#### this is a very early release.
+#### note: this is a very early release.
 
-Can be used in query and interactive mode.  
+Can be used in run and interactive mode.  
 
-#### Query mode
+#### Run mode
+
+Run mode allows to run single stateless commands.
+
+##### Parameter passing
+
+Parameters can be passed in various ways. 
+
+###### Json file
+
+*> neuraliumcli run --config=/home/user/config.json*
+
+config.json:
+
+> {
+"Operation" : "SendNeuraliums",
+"Parameters" : [{"Name":"targetAccountId", "Value":"{SF3}"},
+		{"Name":"amount", "Value":"1.1"},
+		{"Name":"tip", "Value":"0.001"},
+		{"Name":"note", "Value":""}]
+}
+
+###### Json parameters
+
+*> neuraliumcli run -o SendNeuraliums --jparams "[{\"Name\":\"targetAccountId\", \"Value\":\"{SF3}\"},{\"Name\":\"amount\", \"Value\":\"1.1\"}]"*
+
+###### Named Parameters List
+
+*> neuraliumcli run -o SendNeuraliums --params "targetAccountId={SF3};amount=1.1;tip=0.001"*
+
+###### Ordered Parameters List
+
+*> neuraliumcli run -o SendNeuraliums --params "{SF3};1.1;0.001"*
+
+
+##### Example commands
 
 Run individual commands:
 
-Neuralium.Cli query Ping
+*> neuraliumcli run -o Ping*
 
+*> neuraliumcli run -o QueryBlockChainInfo*
 
-Neuralium.Cli query QueryBlockChainInfo
+*> neuraliumcli run -o IsWalletLoaded*
 
-Neuralium.Cli query IsWalletLoaded
+*> neuraliumcli run -o WalletExists*
 
-Neuralium.Cli query WalletExists
+*> neuraliumcli run -o LoadWallet*
 
-Neuralium.Cli query LoadWallet
+*> neuraliumcli run -o CreateNewWallet --params "accountName=account name;encryptWallet=false;encryptKey=false;encryptKeysIndividually=false"*
 
-Neuralium.Cli query CreateNewWallet "account name" false false false
+*> neuraliumcli run -o CreateNewWallet --params "accountName=account name;encryptWallet=true;encryptKey=true;encryptKeysIndividually=true;passphrases={\"0\":\"pass1\",\"1\":\"pass2\"}"*
 
+*> neuraliumcli run -o QueryBlock 108*
 
-Neuralium.Cli query QueryBlock 108
+*> neuraliumcli run -o QueryWalletAccounts*
 
-Neuralium.Cli query QueryWalletAccounts
+*> neuraliumcli run -o QueryAccountTotalNeuraliums --params "targetAccountId=016d2570-7b0a-44dd-b410-bb479776d6c2"*
 
-Neuralium.Cli query QueryAccountTotalNeuraliums "016d2570-7b0a-44dd-b410-bb479776d6c2"
+*> neuraliumcli run -o PublishAccount --params "targetAccountId=016d4f5a-c134-4141-8e35-3278b9baed67"*
 
-Neuralium.Cli query PublishAccount "016d4f5a-c134-4141-8e35-3278b9baed67"
+*> neuraliumcli run -o SendNeuraliums --params "targetAccountId={SF3};amount=1.1;tip=0.001;note\"some note\""*
 
-Neuralium.Cli query SendNeuraliums "{SF}" 10.11 0.5 "some note"
+*> neuraliumcli run -o StartMining*
 
-Neuralium.Cli query StartMining
+*> neuraliumcli run -o StopMining*
 
-Neuralium.Cli query StopMining
-
-Neuralium.Cli query Shutdown
+*> neuraliumcli run -o Shutdown*
 
 #### Interactive mode
 
-Neuralium.Cli interactive
+neuraliumcli interactive
 
 (note: interactive mode not working yet).
 
 ## Build Instructions
 
-##### First, ensure dotnet core 3.0 SDK is installed
+##### First, ensure dotnet core 3.1 SDK is installed
 
 #### The first step is to ensure that the dependencies have been built and copied into the nuget-source folder.
 

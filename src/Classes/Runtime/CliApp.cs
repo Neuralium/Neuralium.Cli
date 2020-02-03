@@ -35,7 +35,7 @@ namespace Neuralium.Cli.Classes.Runtime {
 			this.serviceProvider = serviceProvider;
 
 			this.api = new API();
-			this.api.Init(this.appSettings, NeuraliumApi.UseModes.SendReceive);
+			this.api.Init(this.appSettings, moderatorInteractiveOptions, NeuraliumApi.UseModes.SendReceive);
 		}
 
 		protected override async void Initialize() {

@@ -33,13 +33,13 @@ namespace Neuralium.Cli.Classes.API {
 		protected SignalrClient signalrClient;
 		protected NeuraliumApi.UseModes useMode;
 
-		public void Init(AppSettings appSettings, NeuraliumApi.UseModes useMode) {
+		public void Init(AppSettings appSettings, OptionsBase options, NeuraliumApi.UseModes useMode) {
 			this.useMode = useMode;
 
 			if(useMode == NeuraliumApi.UseModes.SendReceive) {
-				this.signalrClient = new SignalrClient(appSettings, this);
+				this.signalrClient = new SignalrClient(appSettings, options, this);
 			} else if(useMode == NeuraliumApi.UseModes.SendOnly) {
-				this.signalrClient = new SignalrClient(appSettings);
+				this.signalrClient = new SignalrClient(appSettings, options);
 			}
 		}
 
@@ -51,19 +51,17 @@ namespace Neuralium.Cli.Classes.API {
 			await this.signalrClient.Disconnect();
 		}
 
-		public async Task<string> InvokeMethod(string operation, IEnumerable<string> parameters) {
+		public async Task<string> InvokeMethod(IQueryJson parameters ) {
 
-			MethodInfo methodInfo = typeof(API_METHODS).GetMethod(operation, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+			MethodInfo methodInfo = typeof(API_METHODS).GetMethod(parameters.Operation, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
 			if(methodInfo == null) {
 				throw new ArgumentException("Operation was not found");
 			}
 
 			var parameterInfos = methodInfo.GetParameters();
-
-			var stringParameters = parameters as string[] ?? parameters.ToArray();
-
-			if(stringParameters.Count() != parameterInfos.Length) {
+			
+			if(parameters.ParameterCount != parameterInfos.Length) {
 				// we will jus try nulls
 				Log.Warning("Parameter count is different. Nulls will be assigned to missing parameters");
 				//throw new ArgumentException("Invalid parameter count");
@@ -72,20 +70,44 @@ namespace Neuralium.Cli.Classes.API {
 			var methodParameters = new object[parameterInfos.Length];
 
 			for(int i = 0; i < methodParameters.Length; i++) {
-				if(stringParameters.Length > i) {
-					if(!this.DeserializeParameter(stringParameters[i], parameterInfos[i].ParameterType, out methodParameters[i])) {
-						methodParameters[i] = JsonSerializer.Deserialize(stringParameters[i], parameterInfos[i].ParameterType);
+				if(parameters.ParameterCount > i) {
+
+					void GetParamenter(string value) {
+						if(!DeserializeParameter(value, parameterInfos[i].ParameterType, out methodParameters[i])) {
+							methodParameters[i] = Newtonsoft.Json.JsonConvert.DeserializeObject(value, parameterInfos[i].ParameterType);
+						}
+					}
+					if(parameters is QueryJsonNamed query) {
+						var paramValue = query.Parameters.SingleOrDefault(e => string.Equals(e.Name, parameterInfos[i].Name, StringComparison.CurrentCultureIgnoreCase));
+
+						if(paramValue != null) {
+
+							GetParamenter(paramValue.Value);
+						}
+					}
+					else if(parameters is QueryJsonIndexed indexed) {
+
+						var paramValue = indexed.Parameters.SingleOrDefault(e => e.HasName && string.Equals(e.Name, parameterInfos[i].Name, StringComparison.CurrentCultureIgnoreCase));
+						
+						if(paramValue != null) {
+							GetParamenter(paramValue.Element);
+						} else {
+							// get by index
+							var list = indexed.FormattedParameters.ToList();
+							GetParamenter(list[i]);
+						}
 					}
 				}
 			}
 
 			object result = null;
-			Log.Information($"invoking method {operation}");
-			Task task = (Task) methodInfo.Invoke(this, methodParameters);
+			Log.Information($"invoking method {parameters.Operation}");
+
+			Task task =  (Task) methodInfo.Invoke(this, methodParameters);
 
 			await task;
-
-			Log.Information($"method invoked and returned {operation}");
+			
+			Log.Information($"method invoked and returned {parameters.Operation}");
 
 			Type taskType = task.GetType();
 
@@ -96,7 +118,7 @@ namespace Neuralium.Cli.Classes.API {
 			return result == null ? "" : JsonSerializer.Serialize(result, new JsonSerializerOptions(){WriteIndented = true});
 		}
 
-		private bool DeserializeParameter(string serialized, Type type, out object result) {
+		private static bool DeserializeParameter(string serialized, Type type, out object result) {
 
 			result = null;
 
@@ -281,7 +303,7 @@ namespace Neuralium.Cli.Classes.API {
 		}
 
 		public async Task<int> SendNeuraliums(string targetAccountId, decimal amount, decimal tip, string note) {
-			return await this.signalrClient.InvokeMethod<int>(this.GetCallingMethodName(), new object[] {chainType, targetAccountId, amount, tip, note});
+			return await this.signalrClient.InvokeMethod<int>(this.GetCallingMethodName(), new object[] {targetAccountId, amount, tip, note});
 		}
 
 		public async Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase) {
