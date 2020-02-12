@@ -13,6 +13,10 @@ using Serilog;
 namespace Neuralium.Cli {
 	public class Program {
 
+		protected const string appsettings = "config/config.json";
+		protected const string docker_base_path = "/home/data/config.json";
+		protected const string docker_appsettings = "config/docker.config.json";
+		
 		public static async Task<int> Main(string[] args) {
 			//options parsing first
 			var result = new Parser(with => with.EnableDashDash = true).ParseArguments<RunOptions, InteractiveOptions>(args);
@@ -42,7 +46,20 @@ namespace Neuralium.Cli {
 
 		private static async Task<int> RunAndReturnExitCode(RunOptions opts) {
 
-			IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("config.json", true, true);
+			IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory());
+				
+			if(opts.RuntimeMode.ToUpper() == "DOCKER") {
+				Console.WriteLine($"Docker mode.");
+				if(File.Exists(docker_base_path)) {
+					Console.WriteLine($"Loading config file {docker_base_path}");
+					builder = builder.AddJsonFile(docker_base_path, false, false);
+				} else {
+					Console.WriteLine($"Default docker config not found. Loading config file {docker_appsettings}");
+					builder = builder.AddJsonFile(docker_appsettings, false, false);
+				}
+			} else {
+				builder = builder.AddJsonFile(appsettings, false, false);
+			}
 
 			IConfigurationRoot configuration = builder.Build();
 

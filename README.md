@@ -1,6 +1,6 @@
 # neuraliumcli
 
-##### Version Release Candidate I
+##### Version Release Candidate II
 
 The Neuralium crypto token console remote API 
 
@@ -17,6 +17,10 @@ Run mode allows to run single stateless commands.
 ##### Parameter passing
 
 Parameters can be passed in various ways. 
+
+##### Target IP and Port
+
+*> neuraliumcli run -h "127.0.0.1" -p 12033 -o Ping
 
 ###### Json file
 

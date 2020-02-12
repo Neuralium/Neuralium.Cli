@@ -13,6 +13,8 @@ namespace Neuralium.Cli.Classes.Runtime {
 		[Option('c', "config", Default = "", Required = false, HelpText = "The path to a json configuration file.")]
 		public string ConfigurationFile { get; set; }
 
+		[Option('r', "runtime-mode", Default = "", Required = false, HelpText = "Are we running this in docker or not.")]
+		public string RuntimeMode { get; set; }
 	}
 
 	[Verb("int", HelpText = "Add file contents to the index.")]
