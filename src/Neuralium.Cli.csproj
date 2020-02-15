@@ -19,6 +19,7 @@
   </ItemGroup>
     <ItemGroup>
 
+        <PackageReference Include="Neuralia.Blockchains.Core" Version="1.0.0" />
     <PackageReference Include="Neuralia.Blockchains.Tools" Version="1.0.0" />
     <PackageReference Include="Neuralia.BouncyCastle" Version="1.0.0" />
     <PackageReference Include="Neuralia.STUN" Version="1.0.0" />
@@ -42,9 +43,6 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
-
-    <Target Name="CopyCustomContent2" AfterTargets="AfterBuild">
-        <Copy SourceFiles="config.json" DestinationFolder="$(OutputPath)" />
-    </Target>
+    
     <Import Project="$(MSBuildProjectDirectory)/../CommonSettings.targets" />
 </Project>

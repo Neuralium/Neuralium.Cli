@@ -219,5 +219,5 @@ project.lock.json
 #####
 
 /Logs/*
-
+/build/*
 

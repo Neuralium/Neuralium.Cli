@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using CommandLine;
-using Neuralia.Blockchains.Core.Services;
 
 namespace Neuralium.Cli.Classes.Runtime {
 	public abstract class OptionsBase {
