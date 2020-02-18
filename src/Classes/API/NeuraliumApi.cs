@@ -179,7 +179,7 @@ namespace Neuralium.Cli.Classes.API {
 			Log.Information("Server is requesting that wallet passphrase be provided");
 		}
 
-		public void WalletTotalUpdated(int correlationId, Guid accountId, double total) {
+		public void WalletTotalUpdated(int correlationId, Guid accountUuid, double total) {
 			Log.Information($"Wallet total was updated to {total}");
 		}
 
@@ -278,8 +278,8 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[]{chainType});
 		}
 
-		public async Task<int> PublishAccount(string accountUuId) {
-			return await this.signalrClient.InvokeMethod<int>(this.GetCallingMethodName(), new object[]{chainType, accountUuId});
+		public async Task<int> PublishAccount(string accountUuid) {
+			return await this.signalrClient.InvokeMethod<int>(this.GetCallingMethodName(), new object[]{chainType, accountUuid});
 		}
 
 		public async Task StartMining(string delegateAccountId) {

@@ -17,6 +17,6 @@ namespace Neuralium.Cli.Classes.API {
 		void AccountPublicationCompleted(int correlationId, Guid accountUuid, bool result, long accountSequenceId, byte accountType);
 
 		// neuraliums
-		void WalletTotalUpdated(int correlationId, Guid accountId, double total);
+		void WalletTotalUpdated(int correlationId, Guid accountUuid, double total);
 	}
 }

@@ -1,6 +1,6 @@
 # neuraliumcli
 
-##### Version Release Candidate II
+##### Version Release Candidate III
 
 The Neuralium crypto token console remote API 
 
@@ -71,9 +71,13 @@ Run individual commands:
 
 *> neuraliumcli run -o QueryWalletAccounts*
 
-*> neuraliumcli run -o QueryAccountTotalNeuraliums --params "targetAccountId=016d2570-7b0a-44dd-b410-bb479776d6c2"*
+*> neuraliumcli run -o QueryDefaultWalletAccountId*
 
-*> neuraliumcli run -o PublishAccount --params "targetAccountId=016d4f5a-c134-4141-8e35-3278b9baed67"*
+*> neuraliumcli run -o QueryDefaultWalletAccountUuid*
+
+*> neuraliumcli run -o QueryAccountTotalNeuraliums --params "accountUuid=016d2570-7b0a-44dd-b410-bb479776d6c2"*
+
+*> neuraliumcli run -o PublishAccount --params "accountUuid=016d4f5a-c134-4141-8e35-3278b9baed67"*
 
 *> neuraliumcli run -o SendNeuraliums --params "targetAccountId={SF3};amount=1.1;tip=0.001;note\"some note\""*
 

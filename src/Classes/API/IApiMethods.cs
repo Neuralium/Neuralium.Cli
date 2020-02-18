@@ -26,7 +26,7 @@ namespace Neuralium.Cli.Classes.API {
 		Task<int> CreateNewWallet(string accountName, bool encryptWallet, bool encryptKey, bool encryptKeysIndividually, Dictionary<int, string> passphrases, bool publishAccount);
 		Task<List<object>> QueryBlockBinaryTransactions(long blockId);
 		
-		Task<int> PublishAccount(string accountUuId);
+		Task<int> PublishAccount(string accountUuid);
 
 		Task<object> QueryElectionContext(long blockId);
 		
