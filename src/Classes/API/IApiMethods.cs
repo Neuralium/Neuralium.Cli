@@ -32,6 +32,7 @@ namespace Neuralium.Cli.Classes.API {
 		
 		Task StartMining(string delegateAccountId);
 		Task StopMining();
+		Task<bool> IsMiningEnabled();
 		
 		Task<string> QueryBlock(long blockId);
 

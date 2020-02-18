@@ -290,6 +290,10 @@ namespace Neuralium.Cli.Classes.API {
 			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[]{chainType});
 		}
 
+		public async Task<bool> IsMiningEnabled() {
+			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[]{chainType});
+		}
+		
 		public async Task<object> QueryElectionContext(long blockId) {
 			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {chainType, blockId});
 		}
