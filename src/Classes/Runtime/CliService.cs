@@ -1,8 +1,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Neuralia.Blockchains.Tools;
 using Microsoft.Extensions.Hosting;
+using Neuralia.Blockchains.Core.Logging;
+using Neuralia.Blockchains.Tools;
 using Serilog;
 
 namespace Neuralium.Cli.Classes.Runtime {
@@ -23,41 +24,38 @@ namespace Neuralium.Cli.Classes.Runtime {
 
 		public Task StartAsync(CancellationToken cancellationNeuralium) {
 
-			Log.Information("Daemon is starting....");
+			NLog.Default.Information("Daemon is starting....");
 
 			this.ApplicationLifetime.ApplicationStarted.Register(this.OnStarted);
 			this.ApplicationLifetime.ApplicationStopping.Register(this.OnStopping);
 			this.ApplicationLifetime.ApplicationStopped.Register(this.OnStopped);
 
-			this.cliApp.Start();
+			return this.cliApp.Start();
 
-			return Task.CompletedTask;
 		}
 
-		public Task StopAsync(CancellationToken cancellationNeuralium) {
+		public async Task StopAsync(CancellationToken cancellationNeuralium) {
 
-			Log.Information("Daemon shutdown in progress...");
+			NLog.Default.Information("Daemon shutdown in progress...");
 
-			this.cliApp.Stop();
+			await this.cliApp.Stop().ConfigureAwait(false);
 			this.cliApp.WaitStop(TimeSpan.FromSeconds(10));
 
 			this.cliApp.Dispose();
-
-			return Task.CompletedTask;
 		}
 
 		protected virtual void OnStarted() {
-			Log.Information("Daemon is successfully started.");
+			NLog.Default.Information("Daemon is successfully started.");
 
 			// Post-startup code goes here
 		}
 
 		protected virtual void OnStopping() {
-			Log.Information("Daemon shutdown requested.");
+			NLog.Default.Information("Daemon shutdown requested.");
 		}
 
 		protected virtual void OnStopped() {
-			Log.Information("Daemon successfully stopped");
+			NLog.Default.Information("Daemon successfully stopped");
 		}
 
 	#region Dispose
@@ -70,7 +68,6 @@ namespace Neuralium.Cli.Classes.Runtime {
 		}
 
 		private void Dispose(bool disposing) {
-			
 
 			if(disposing && !this.IsDisposed) {
 
@@ -82,9 +79,10 @@ namespace Neuralium.Cli.Classes.Runtime {
 					}
 
 				} catch(Exception ex) {
-					Log.Error(ex, "failed to dispose of Neuralium service");
-				} 
+					NLog.Default.Error(ex, "failed to dispose of Neuralium service");
+				}
 			}
+
 			this.IsDisposed = true;
 		}
 

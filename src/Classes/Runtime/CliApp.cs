@@ -1,11 +1,13 @@
 using System;
-using System.Linq;
-using System.Threading;
-using Neuralia.Blockchains.Tools.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Neuralia.NClap.Metadata;
+using Neuralia.NClap.Repl;
+using Neuralia.Blockchains.Tools.Locking;
+using Neuralia.Blockchains.Tools.Threading;
 using Neuralium.Cli.Classes.API;
-using Serilog;
+using Neuralium.Cli.Classes.Runtime.Commands;
 
 namespace Neuralium.Cli.Classes.Runtime {
 	public interface ICliApp : ILoopThread<ICliApp> {
@@ -16,41 +18,70 @@ namespace Neuralium.Cli.Classes.Runtime {
 		where API_METHODS : IApiMethods {
 
 		private readonly API api;
+		private readonly Loop loop;
 
 		protected readonly IHostApplicationLifetime applicationLifetime;
 
 		protected readonly AppSettings appSettings;
 
-		protected readonly InteractiveOptions CmdModeratorInteractiveOptions;
+		protected readonly OptionsBase CmdModeratorInteractiveOptions;
 		protected readonly IServiceProvider serviceProvider;
 
 		private bool processing;
 		private bool quitting;
 
-		public CliApp(IServiceProvider serviceProvider, IHostApplicationLifetime applicationLifetime, IOptions<AppSettings> appSettings, InteractiveOptions moderatorInteractiveOptions) {
+		public CliApp(IServiceProvider serviceProvider, IHostApplicationLifetime applicationLifetime, IOptions<AppSettings> appSettings, OptionsBase interactiveOptions) {
 
 			this.appSettings = appSettings.Value;
-			this.CmdModeratorInteractiveOptions = moderatorInteractiveOptions;
+			this.CmdModeratorInteractiveOptions = interactiveOptions;
 			this.applicationLifetime = applicationLifetime;
 			this.serviceProvider = serviceProvider;
 
 			this.api = new API();
-			this.api.Init(this.appSettings, moderatorInteractiveOptions, NeuraliumApi.UseModes.SendReceive);
+			this.api.Init(this.appSettings, interactiveOptions, NeuraliumApi.UseModes.SendReceive);
+			
+			this.loop = new Loop(typeof(ApiCommands));
 		}
 
-		protected override async void Initialize() {
-			base.Initialize();
+		protected override async Task Initialize(LockContext lockContext) {
+			await base.Initialize(lockContext).ConfigureAwait(false);
 
 			try {
-				await this.api.Connect();
+				await this.api.Connect().ConfigureAwait(false);
 
 			} catch(Exception ex) {
 				throw new ApplicationException("Failed to run daemon", ex);
 			}
 		}
 
-		protected override void ProcessLoop() {
+		protected override Task ProcessLoop(LockContext lockContext) {
+			try
+			{
+				var result = loop.ExecuteOnce(c =>
+				{
+					if (c is CommandGroup<Neuralium.Cli.Classes.Runtime.ApiCommands> group)
+					{
+						if (group.InstantiatedCommand is CommandBase<API, API_METHODS> command)
+						{
+							command.Arguments = this.CmdModeratorInteractiveOptions;
+							command.Api = this.api;
+						}
+						
+					}
+				});
+				
+				if(result == CommandResult.Terminate)
+					this.Shutdown();
 
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				this.Shutdown();
+			}
+			
+			
+			return Task.CompletedTask;
 		}
 
 		protected void Shutdown() {
@@ -58,10 +89,10 @@ namespace Neuralium.Cli.Classes.Runtime {
 			this.applicationLifetime.StopApplication();
 		}
 
-		protected override async void DisposeAll() {
-			
+		protected override async Task DisposeAllAsync() {
+
 			try {
-				await this.api.Disconnect();
+				await this.api.Disconnect().ConfigureAwait(false);
 
 			} catch(Exception ex) {
 				Console.WriteLine(ex);
