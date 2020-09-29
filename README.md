@@ -55,7 +55,7 @@ There are two modes of operation, the interactive mode and the stateless mode. T
 
 ```
 $ neuraliumcli
-> [you are now in terrective mode, you can enter any command, including 'help']
+> [you are now in interactive mode, you can enter any command, including 'help']
 ```
 
 otherwise you can use the "stateless mode"
