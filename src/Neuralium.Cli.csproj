@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <OutputType>Exe</OutputType>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+         <TargetFramework>net5.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <RootNamespace>Neuralium.Cli</RootNamespace>
+        <AssemblyName>neuraliumcli</AssemblyName>
+        <Deterministic>false</Deterministic>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DebugType>full</DebugType>
+    </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+    <ItemGroup>
+
+        <PackageReference Include="Neuralia.Blockchains.Core" Version="1.0.0" />
+    <PackageReference Include="Neuralia.Blockchains.Tools" Version="1.0.0" />
+    <PackageReference Include="Neuralia.BouncyCastle" Version="1.0.0" />
+
+                <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.1" />
+        <PackageReference Include="morelinq" Version="3.3.2" />
+        <PackageReference Include="Neuralia.NClap" Version="1.0.0" />
+        <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+        <PackageReference Include="Serilog.Exceptions" Version="6.0.0" />
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="3.1.0" />
+        <PackageReference Include="Serilog.Settings.AppSettings" Version="2.2.2" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
+        <PackageReference Include="Serilog.Sinks.Async" Version="1.4.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+        <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="config.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="config\config.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    
+    <Import Project="$(MSBuildProjectDirectory)/../CommonSettings.targets" />
+</Project>
