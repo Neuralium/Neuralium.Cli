@@ -188,7 +188,7 @@ namespace Neuralium.Cli.Classes.Runtime
 	    bool EncryptKey{ get; set; }
 	    [PositionalArgument(ArgumentFlags.Required, Position = 4)]
 	    bool EncryptKeysIndividually{ get; set; }
-	    [PositionalArgument(ArgumentFlags.Required, Position = 5)]
+	    [PositionalArgument(ArgumentFlags.Required, Position = 5, AllowEmpty = true)]
 	    Dictionary<string, string> Passphrases{ get; set; }
 	    [PositionalArgument(ArgumentFlags.Required, Position = 6)]
 	    bool PublishAccount { get; set; }
@@ -252,7 +252,7 @@ namespace Neuralium.Cli.Classes.Runtime
 	    [PositionalArgument(ArgumentFlags.Required, Position = 1)]
 	    decimal Amount{ get; set; }
 	    [PositionalArgument(ArgumentFlags.Required, Position = 2)]
-	    decimal Tip{ get; set; }
+	    decimal Tp{ get; set; }
 	    [PositionalArgument(ArgumentFlags.Required, Position = 3)]
 	    string note{ get; set; }
     }

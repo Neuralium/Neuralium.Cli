@@ -122,7 +122,7 @@ namespace Neuralium.Cli.Classes.Runtime.Commands
             set => this.timeoutForLongOperation = value;
         }
         
-        [NamedArgument(ArgumentFlags.Optional, DefaultValue = "", Description = "The json set of parameters.")]
+        [NamedArgument(ArgumentFlags.Optional, ShortName = "j", LongName = "jparams", DefaultValue = "", Description = "The json set of parameters. Usage: CreateNewWallet --jparams='[{\"AccountName\":\"account name\",\"AccountType\":1,\"EncryptWallet\":false,\"EncryptKey\":false,\"EncryptKeysIndividually\":false}'")]
         public string JParameters
         {
             get => this.jParameters;

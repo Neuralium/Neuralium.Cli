@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Neuralia.Blockchains.Core;
 using Neuralia.Blockchains.Core.Logging;
 using Neuralium.Cli.Classes.API;
 using Serilog;
@@ -34,16 +35,8 @@ namespace Neuralium.Cli.Classes.Runtime {
 
 		public static string GetExecutingDirectoryName()
 		{
-			Uri location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
+			return FileUtilities.GetExecutingDirectory();
 
-			DirectoryInfo directoryInfo = new FileInfo(location.AbsolutePath).Directory;
-
-			if (directoryInfo != null)
-			{
-				return directoryInfo.FullName;
-			}
-
-			throw new ApplicationException("Invalid execution directory");
 		}
 		public static IConfigurationRoot BuildConfiguration(OptionsBase opts)
 		{
