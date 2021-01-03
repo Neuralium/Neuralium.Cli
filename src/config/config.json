@@ -21,7 +21,32 @@
     }
   },
   "Serilog": {
-      "WriteTo": [{ "Name": "File", "Args": { "path": "log.txt", "rollingInterval": "Day", "outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties}{NewLine}{Exception}" } }],
+    "WriteTo": [
+//      {
+//        "Name": "Async",
+//        "Args": {
+//          "configure": [
+//            {
+//              "Name": "Console",
+//              "Args": {
+//                "theme": "Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme::Code, Serilog.Sinks.Console",
+//                "outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties}{NewLine}{Exception}"
+//              }
+//            }
+//          ]
+//        }
+//      },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "auto",
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] [{SourceContext}] [{EventId}] {Message}{NewLine}{Exception}",
+          "rollingInterval": "Day",
+          "retainedFileCountLimit": 10,
+          "restrictedToMinimumLevel": "Debug"
+        }
+      }
+    ],
       "Enrich": ["WithExceptionDetails", "WithThreadId" ],
       "Properties": {
 

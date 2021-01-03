@@ -58,7 +58,6 @@ namespace Neuralium.Cli.Classes.Runtime.Commands
                 List<string> list = this.parameters.ToList();
 
                 for(int i = 0; i < this.parameters.Count(); i++) {
-
                     ((QueryJsonIndexed) result).Parameters.Add(new QueryJsonIndexed.IndexedOperationParameters(i, list[i]));
                 }
             } else {
@@ -75,7 +74,7 @@ namespace Neuralium.Cli.Classes.Runtime.Commands
         public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
         {
             // TODO: Do something here.
-            Console.WriteLine($"operation {operationName}, params {String.Join(", ", this.parameters.ToArray())} ({this.parameters.Count})");
+            Console.WriteLine($"operation {operationName}, {this.parameters.Count} param(s): {String.Join(", ", this.parameters.ToArray())}");
             
             IQueryJson parameters = this.PrepareQueryJson();
             

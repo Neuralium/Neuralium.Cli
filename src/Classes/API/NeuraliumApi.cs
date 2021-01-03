@@ -65,10 +65,10 @@ namespace Neuralium.Cli.Classes.API {
 
 		}
 
-		public async Task<bool> WaitForLongRunningTask(int correlationId, double timeout = Double.MaxValue, double timeStep = 0.25)
+		public async Task<bool> WaitForLongRunningTask(uint correlationId, double timeout = Double.MaxValue, double timeStep = 0.25)
 		{
 			long creationComplete = 0;
-			RegisterLongRunningTaskCallback(correlationId
+			RegisterLongRunningTaskCallback(unchecked((int)correlationId)
 				, () => Interlocked.Increment(ref creationComplete));
 
 			
@@ -82,7 +82,7 @@ namespace Neuralium.Cli.Classes.API {
 					if (timeElapsed > timeout)
 					{
 						NLog.Default.Information($"Timeout of {timeout} reached waiting for correlation id {correlationId}, aborting...");
-						longRunningTasksCallbacks.Remove(correlationId);
+						longRunningTasksCallbacks.Remove(unchecked((int)correlationId));
 						return false;
 					}
 				}
@@ -172,7 +172,7 @@ namespace Neuralium.Cli.Classes.API {
 				    && this.longRunningCalls.TryGetValue(correlationId, out var operation)
 				    && parameters.Operation == operation)
 				{
-					if (await this.WaitForLongRunningTask(correlationId, timeoutForLongOperation).ConfigureAwait(false))
+					if (await this.WaitForLongRunningTask(unchecked((uint)correlationId), timeoutForLongOperation).ConfigureAwait(false))
 						result = true; //else result still contains correlationId
 				}
 				
@@ -204,7 +204,7 @@ namespace Neuralium.Cli.Classes.API {
 			return result != null;
 		}
 
-		private async Task<int> InvokeLongRunningMethod(string operation, IEnumerable<object> parameters) {
+		private async Task<uint> InvokeLongRunningMethod(string operation, IEnumerable<object> parameters) {
 			if(this.useMode == NeuraliumApi.UseModes.SendOnly) {
 				NLog.Default.Warning("We are in send only mode. Correlation events will not be captured");
 			}
@@ -217,7 +217,7 @@ namespace Neuralium.Cli.Classes.API {
 			this.longRunningTasks.Add(correlationId, null);
 			this.longRunningCalls.Add(correlationId, operation);
 
-			return correlationId;
+			return unchecked((uint) correlationId);
 		}
 
 		protected string GetCallingMethodName([CallerMemberName] string caller = null) {
@@ -232,7 +232,7 @@ namespace Neuralium.Cli.Classes.API {
 
 		public void EnterWalletPassphrase(int correlationId, string accountCode, string passphrase) {
 			NLog.Default.Information($"Event {this.GetCallingMethodName()} {accountCode} {passphrase.HasValue()}");
-			this.CompleteLongRunningEvent(correlationId, new[] {accountCode, passphrase}).WaitAndUnwrapException();
+			this.CompleteLongRunningEvent(unchecked((uint)correlationId), new[] {accountCode, passphrase}).WaitAndUnwrapException();
 		}
 
 		public void EnterWalletKeyPassphrase(string accountCode, string path) {
@@ -263,12 +263,12 @@ namespace Neuralium.Cli.Classes.API {
 		public void EnterWalletPassphrase(int correlationId, int keyCorrelationCode, int attempt) {
 
 			NLog.Default.Information($"Event {this.GetCallingMethodName()} {correlationId} {keyCorrelationCode} {attempt}");
-			this.EnterWalletPassphrase(correlationId, keyCorrelationCode, Console.ReadLine()).WaitAndUnwrapException();
+			this.EnterWalletPassphrase(unchecked((uint)correlationId), unchecked((uint)keyCorrelationCode), Console.ReadLine()).WaitAndUnwrapException();
 		}
 
 		public void EnterKeysPassphrase(int correlationId, int keyCorrelationCode, string accountCode, string keyname, int attempt) {
 			NLog.Default.Information($"Event {this.GetCallingMethodName()} {correlationId} {keyCorrelationCode} {accountCode} {keyname} {attempt}");
-			this.EnterKeyPassphrase(correlationId, keyCorrelationCode, Console.ReadLine()).WaitAndUnwrapException();
+			this.EnterKeyPassphrase(unchecked((uint)correlationId), unchecked((uint)keyCorrelationCode), Console.ReadLine()).WaitAndUnwrapException();
 		}
 
 		public void walletCreationStarted(int correlationId)
@@ -303,17 +303,17 @@ namespace Neuralium.Cli.Classes.API {
 
 	#region Methods
 
-		public async Task<bool> CompleteLongRunningEvent(int correlationId, object data) {
+		public async Task<bool> CompleteLongRunningEvent(uint correlationId, object data) {
 			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new[] {correlationId, data}).ConfigureAwait(false);
 		}
 
-		public async Task<bool> RenewLongRunningEvent(int correlationId) {
+		public async Task<bool> RenewLongRunningEvent(uint correlationId) {
 			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {correlationId}).ConfigureAwait(false);
 		}
 
 		public async Task Test()
 		{
-			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new string[0]).ConfigureAwait(false);
+			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[0]).ConfigureAwait(false);
 		}
 
 		public async Task<bool> Ping() {
@@ -334,7 +334,7 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {chainType, accountCode}).ConfigureAwait(false);
 		}
 		
-		public async Task<int> PublishAccount(string accountCode) {
+		public async Task<uint> PublishAccount(string accountCode) {
 			return await InvokeLongRunningMethod(GetCallingMethodName(), new object[] {chainType, accountCode}).ConfigureAwait(false);
 		}
 
@@ -364,23 +364,25 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod<byte[]>(this.GetCallingMethodName(), new object[] {chainType, blockId}).ConfigureAwait(false);
 		}
 
-		public async Task<int> SendNeuraliums(string targetAccountId, decimal amount, decimal tip, string note) {
-			return await this.signalrClient.InvokeMethod<int>(this.GetCallingMethodName(), new object[] {targetAccountId, amount, tip, note}).ConfigureAwait(false);
+		public async Task<uint> SendNeuraliums(string targetAccountId, decimal amount, decimal tip, string note) {
+			return await InvokeLongRunningMethod(this.GetCallingMethodName(), new object[] {targetAccountId, amount, tip, note}).ConfigureAwait(false);
 		}
 
-		public async Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase)
+		public async Task EnterWalletPassphrase(uint correlationId, uint keyCorrelationCode, string passphrase)
 		{
-			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {correlationId, chainType, keyCorrelationCode, passphrase}).ConfigureAwait(false);
+			passphrase = AskPassphrase(passphrase);
+			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {unchecked((uint)correlationId), chainType, keyCorrelationCode, passphrase}).ConfigureAwait(false);
 		}
 
-		public async Task EnterKeyPassphrase(int correlationId, int keyCorrelationCode, string passphrase)
+		public async Task EnterKeyPassphrase(uint correlationId, uint keyCorrelationCode, string passphrase)
 		{
-			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {correlationId, chainType, keyCorrelationCode, passphrase}).ConfigureAwait(false);
+			passphrase = AskPassphrase(passphrase);
+			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {unchecked((uint)correlationId), chainType, keyCorrelationCode, passphrase}).ConfigureAwait(false);
 		}
 
-		public async Task WalletKeyFileCopied(int correlationId, int keyCorrelationCode)
+		public async Task WalletKeyFileCopied(uint correlationId, uint keyCorrelationCode)
 		{
-			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {correlationId, chainType, keyCorrelationCode}).ConfigureAwait(false);
+			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {unchecked((uint)correlationId), chainType, keyCorrelationCode}).ConfigureAwait(false);
 		}
 
 		public async Task<object> QuerySupportedChains() {
@@ -404,16 +406,29 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
 		}
 
-		public async Task<int> LoadWallet() {
-			return await this.InvokeLongRunningMethod(this.GetCallingMethodName(), new object[] {chainType, ""}).ConfigureAwait(false);
+		public async Task<uint> LoadWallet(string passphrase)
+		{
+			passphrase = AskPassphrase(passphrase);
+			return await this.InvokeLongRunningMethod(this.GetCallingMethodName(), new object[] {chainType, passphrase}).ConfigureAwait(false);
+		}
+
+		private static string AskPassphrase(string passphrase)
+		{
+			if (passphrase == null)
+			{
+				Console.WriteLine("Please enter your password, the press 'Enter':");
+				passphrase = Console.ReadLine();
+			}
+
+			return passphrase;
 		}
 
 		public async Task<bool> WalletExists() {
 			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
 		}
 
-		public async Task<int> CreateNewWallet(string accountName, int accountType, bool encryptWallet, bool encryptKey, bool encryptKeysIndividually, ImmutableDictionary<string, string> passphrases, bool publishAccount) {
-			return await this.InvokeLongRunningMethod(this.GetCallingMethodName(), new object[] {chainType, accountName, accountType, encryptWallet, encryptKey, encryptKeysIndividually, passphrases, publishAccount}).ConfigureAwait(false);
+		public async Task<uint> CreateNewWallet(string accountName, int accountType, bool encryptWallet, bool encryptKey, bool encryptKeysIndividually, ImmutableDictionary<string, string> passphrases, bool publishAccount) {
+			return unchecked((uint) await this.InvokeLongRunningMethod(this.GetCallingMethodName(), new object[] {chainType, accountName, accountType, encryptWallet, encryptKey, encryptKeysIndividually, passphrases, publishAccount}).ConfigureAwait(false));
 		}
 
 		public async Task<List<object>> QueryWalletTransactionHistory(string accountCode) {
@@ -424,7 +439,7 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod<List<object>>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
 		}
 
-		public async Task<int> PresentAccountPublicly() {
+		public async Task<uint> PresentAccountPublicly() {
 			return await this.InvokeLongRunningMethod(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
 		}
 
@@ -440,7 +455,7 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {accountCode}).ConfigureAwait(false);
 		}
 
-		public async Task<int> SendNeuraliums(long recipientAccountId, double amount, double fees) {
+		public async Task<uint> SendNeuraliums(long recipientAccountId, double amount, double fees) {
 			return await this.InvokeLongRunningMethod(this.GetCallingMethodName(), new object[] {recipientAccountId, amount, fees}).ConfigureAwait(false);
 		}
 

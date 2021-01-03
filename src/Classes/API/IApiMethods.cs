@@ -6,30 +6,30 @@ using System.Threading.Tasks;
 namespace Neuralium.Cli.Classes.API {
 	public interface IApiMethods {
 
-		Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase);
-		Task EnterKeyPassphrase(int correlationId, int keyCorrelationCode, string passphrase);
-		Task WalletKeyFileCopied(int correlationId, int keyCorrelationCode);
+		Task EnterWalletPassphrase(uint correlationId, uint keyCorrelationCode, string passphrase);
+		Task EnterKeyPassphrase(uint correlationId, uint keyCorrelationCode, string passphrase);
+		Task WalletKeyFileCopied(uint correlationId, uint keyCorrelationCode);
 
 		Task<object> QuerySupportedChains();
 		Task<long> QueryBlockHeight();
 
 		Task<object> QueryChainStatus();
 		Task<bool> IsWalletLoaded();
-		Task<int> LoadWallet();
+		Task<uint> LoadWallet(string passphrase);
 		Task<bool> WalletExists();
-		Task<bool> CompleteLongRunningEvent(int correlationId, object data);
-		Task<bool> RenewLongRunningEvent(int correlationId);
+		Task<bool> CompleteLongRunningEvent(uint correlationId, object data);
+		Task<bool> RenewLongRunningEvent(uint correlationId);
 		Task Test();
 		Task<bool> Ping();
 		Task<bool> Shutdown();
 
 		Task<object> QueryBlockChainInfo();
-		Task<int> CreateNewWallet(string accountName, int accountType, bool encryptWallet, bool encryptKey, bool encryptKeysIndividually, ImmutableDictionary<string, string> passphrases, bool publishAccount);
+		Task<uint> CreateNewWallet(string accountName, int accountType, bool encryptWallet, bool encryptKey, bool encryptKeysIndividually, ImmutableDictionary<string, string> passphrases, bool publishAccount);
 		Task<List<object>> QueryBlockBinaryTransactions(long blockId);
 
 		Task<object> CanPublishAccount(string accountCode);
 		
-		Task<int> PublishAccount(string accountCode);
+		Task<uint> PublishAccount(string accountCode);
 
 		Task<object> QueryElectionContext(long blockId);
 
@@ -44,10 +44,10 @@ namespace Neuralium.Cli.Classes.API {
 		Task<List<object>> QueryWalletTransactionHistory(string accountCode);
 		Task<List<object>> QueryWalletAccounts();
 
-		Task<int> PresentAccountPublicly();
+		Task<uint> PresentAccountPublicly();
 
 		// neuralium chain
 		Task<object> QueryAccountTotalNeuraliums(string accountCode);
-		Task<int> SendNeuraliums(string targetAccountId, decimal amount, decimal tip, string note);
+		Task<uint> SendNeuraliums(string targetAccountId, decimal amount, decimal tip, string note);
 	}
 }
