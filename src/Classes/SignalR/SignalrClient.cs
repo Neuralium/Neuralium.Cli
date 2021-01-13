@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
@@ -84,22 +85,20 @@ namespace Neuralium.Cli.Classes.SignalR {
 	#region events
 
 		private void RegisterEvents(IApiEvents eventHandler) {
-
-			//TODO: use reflection to set events
-
-			this.connection.On<int, int, int>(nameof(eventHandler.EnterWalletPassphrase), eventHandler.EnterWalletPassphrase);
-			this.connection.On<int, int, string, string, int>(nameof(eventHandler.EnterKeysPassphrase), eventHandler.EnterKeysPassphrase);
-			this.connection.On<int, int, string, string, int>(nameof(eventHandler.CopyWalletKeyFile), eventHandler.CopyWalletKeyFile);
-
-			this.connection.On<int, int, string>(nameof(eventHandler.ReturnClientLongRunningEvent), eventHandler.ReturnClientLongRunningEvent);
-
-			this.connection.On<string>(nameof(eventHandler.RequestCopyWallet), eventHandler.RequestCopyWallet);
-			this.connection.On<int, string, string>(nameof(eventHandler.EnterWalletPassphrase), eventHandler.EnterWalletPassphrase);
-			this.connection.On<string, string>(nameof(eventHandler.EnterWalletKeyPassphrase), eventHandler.EnterWalletKeyPassphrase);
-
-			this.connection.On<int, ushort, byte, string>(nameof(eventHandler.LongRunningStatusUpdate), eventHandler.LongRunningStatusUpdate);
-			this.connection.On<int, string, bool, long, byte>(nameof(eventHandler.AccountPublicationCompleted), eventHandler.AccountPublicationCompleted);
-			this.connection.On<int, string, double>(nameof(eventHandler.WalletTotalUpdated), eventHandler.WalletTotalUpdated);
+			
+			foreach (var method in typeof(IApiEvents).GetMethods())
+			{
+				try
+				{
+					this.connection.On(method.Name, method.GetParameters().Select(p => p.ParameterType).ToArray(),
+						(parameters, instance) => Task.FromResult(method.Invoke(instance, parameters)), eventHandler);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+				}
+			}
+			
 		}
 
 	#endregion

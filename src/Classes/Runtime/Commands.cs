@@ -73,8 +73,8 @@ namespace Neuralium.Cli.Classes.Runtime.Commands
         
         public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
         {
-            // TODO: Do something here.
-            Console.WriteLine($"operation {operationName}, {this.parameters.Count} param(s): {String.Join(", ", this.parameters.ToArray())}");
+
+            Console.WriteLine($"operation {operationName}, {this.parameters.Count} param(s): [{String.Join(", ", this.parameters.ToArray())}]");
             
             IQueryJson parameters = this.PrepareQueryJson();
             
