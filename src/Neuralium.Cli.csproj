@@ -4,11 +4,11 @@
         <PlatformTarget>AnyCPU</PlatformTarget>
         <OutputType>Exe</OutputType>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-         <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <RootNamespace>Neuralium.Cli</RootNamespace>
         <AssemblyName>neuraliumcli</AssemblyName>
-        <Deterministic>false</Deterministic>
+
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <DebugType>full</DebugType>
@@ -37,12 +37,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="config.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="config\config.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
+        <None Update="config\**\*.*" CopyToOutputDirectory="PreserveNewest" Link="%(RecursiveDir)\%(Filename)%(Extension)" />
     </ItemGroup>
     
     <Import Project="$(MSBuildProjectDirectory)/../CommonSettings.targets" />
