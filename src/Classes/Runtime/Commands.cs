@@ -73,22 +73,37 @@ namespace Neuralium.Cli.Classes.Runtime.Commands
         
         public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
         {
-
-            Console.WriteLine($"operation {operationName}, {this.parameters.Count} param(s): [{String.Join(", ", this.parameters.ToArray())}]");
+            string call = $"operation {operationName}, {this.parameters.Count} param(s): [{String.Join(", ", this.parameters.ToArray())}]";
             
-            IQueryJson parameters = this.PrepareQueryJson();
-            
-            try {
-                string result = this.Api.InvokeMethod(parameters, this.timeoutForLongOperation).ConfigureAwait(false).GetAwaiter().GetResult();
+            Console.WriteLine(call);
+            NLog.Default.Information(call);
 
-                if(!string.IsNullOrWhiteSpace(result)) 
+
+            if (!this.Api.IsConnected())
+            {
+                NLog.Default.Error($"Not Connected while calling {call}");
+                Console.WriteLine("Not connected to host (hint: make sure your node is started, or, if not running local,  try with --host='your.node.ip')");
+                return Task.FromResult(CommandResult.RuntimeFailure);
+            }
+            try
+            {
+                IQueryJson parameters = this.PrepareQueryJson();
+                string result = this.Api.InvokeMethod(parameters, this.timeoutForLongOperation).ConfigureAwait(false)
+                    .GetAwaiter().GetResult();
+
+                if (!string.IsNullOrWhiteSpace(result))
                 {
                     NLog.Default.Information(result);
                     Console.WriteLine(result);
-                } else {
-                    NLog.Default.Information("returned");
                 }
-            } catch(Exception ex) {
+                else
+                {
+                    NLog.Default.Information("(empty string)");
+                    Console.WriteLine("(empty string)");
+                }
+            }
+            catch(Exception ex) {
+                
                 NLog.Default.Error(ex, "Failed to query method.");
                 return Task.FromResult(CommandResult.RuntimeFailure);
             }

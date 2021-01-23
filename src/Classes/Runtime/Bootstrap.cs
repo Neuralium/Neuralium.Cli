@@ -11,9 +11,28 @@ using Neuralia.Blockchains.Core.Logging;
 using Neuralium.Cli.Classes.API;
 using Serilog;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 namespace Neuralium.Cli.Classes.Runtime {
-	public class Bootstrap
-	{
+	public class Bootstrap {
 
 		private const string _prefix = "NEURALIUM_";
 		private const string _appsettings = "config/config.json";
@@ -94,7 +113,7 @@ namespace Neuralium.Cli.Classes.Runtime {
 				// allow children to add their own overridable services
 				this.ConfigureExtraServices(services, hostContext.Configuration);
 			}).ConfigureLogging((hostingContext, logging) => {
-
+				Console.WriteLine($"logging section: {hostingContext.Configuration.GetSection("Logging")}");
 				logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
 				logging.AddConsole();
 			}).UseSerilog((hostingContext, loggerConfiguration) => {

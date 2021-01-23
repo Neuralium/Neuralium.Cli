@@ -1,6 +1,6 @@
 # neuraliumcli
 
-##### Version:  MAINNET 1.0.0
+##### Version:  MAINNET 1.0.1.4
 
 The Neuralium crypto token console remote API.
 

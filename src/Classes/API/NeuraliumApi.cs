@@ -45,7 +45,6 @@ namespace Neuralium.Cli.Classes.API {
 		
 		protected SignalrClient signalrClient;
 		protected NeuraliumApi.UseModes useMode;
-		private IApiEvents apiEventsImplementation;
 
 		private T GocLongRunningStatus<T>(bool resetFields = false) where T : LongRunningStatusBase
 		{
@@ -72,6 +71,10 @@ namespace Neuralium.Cli.Classes.API {
 			}
 		}
 
+		public bool IsConnected()
+		{
+			return this.signalrClient.IsConnected();
+		}
 		public void RegisterLongRunningTaskCallback(int correlationId, Action<int, int, string> callback)
 		{
 			if (useMode == NeuraliumApi.UseModes.SendOnly)
@@ -401,8 +404,8 @@ namespace Neuralium.Cli.Classes.API {
 				
 			PrintEvent(LogLevel.Information, this.GetCallingMethodName(), correlationId);
 		}
-
-		public void AccountCreationEnded(int correlationId, string accountCode)
+		
+		public void AccountCreationEnded(int correlationId)
 		{
 			var status = GocLongRunningStatus<AccountCreationStatus>();
 			lock (status)
@@ -768,7 +771,7 @@ namespace Neuralium.Cli.Classes.API {
 
 
 
-		public void walletCreationStarted(int correlationId)
+		public void WalletCreationStarted(int correlationId)
 		{
 			PrintEvent(LogLevel.Information, this.GetCallingMethodName(), correlationId);
 		}
@@ -853,7 +856,7 @@ namespace Neuralium.Cli.Classes.API {
 
 		public async Task<bool> ConfigurePortMappingMode(bool useUPnP, bool usePmP, int natDeviceIndex)
 		{
-			throw new NotImplementedException();
+			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {useUPnP, usePmP, natDeviceIndex}).ConfigureAwait(false);
 		}
 
 		public async Task<byte> GetPublicIPMode()
@@ -863,7 +866,7 @@ namespace Neuralium.Cli.Classes.API {
 
 		public async Task SetUILocale(string locale)
 		{
-			throw new NotImplementedException();
+			await this.signalrClient.InvokeMethod<byte>(this.GetCallingMethodName(), new object[] {locale}).ConfigureAwait(false);
 		}
 
 		public async Task<byte> GetMiningRegistrationIpMode()
@@ -992,6 +995,11 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {chainType, blockId}).ConfigureAwait(false);
 		}
 
+		public async Task<List<object>> QueryNeuraliumTransactionPool()
+		{
+			return await this.signalrClient.InvokeMethod<List<object>>(this.GetCallingMethodName(), new object[] {}).ConfigureAwait(false);
+		}
+
 		public async Task<long> QueryLowestAccountBlockSyncHeight()
 		{
 			return await this.signalrClient.InvokeMethod<long>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
@@ -1059,6 +1067,20 @@ namespace Neuralium.Cli.Classes.API {
 		public async Task SetPuzzleAnswers(List<int> answers)
 		{
 			await this.signalrClient.InvokeMethod<byte[]>(this.GetCallingMethodName(), new object[] {chainType, answers}).ConfigureAwait(false);
+		}
+#if COLORADO_EXCLUSION
+		public async Task<bool> BypassAppointmentVerification(string accountCode) {
+			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {chainType, accountCode}).ConfigureAwait(false);
+		}
+#endif
+		public async Task<object> QueryElectionContext(ushort chainType, long blockId)
+		{
+			return await this.signalrClient.InvokeMethod<List<object>>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
+		}
+
+		public async Task<bool> RestoreWalletNarballBackup(string source, string dest)
+		{
+			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {chainType, source, dest}).ConfigureAwait(false);
 		}
 
 		public async Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase)

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 
+
 namespace Neuralium.Cli.Classes.API {
+	
 	public interface IApiMethods {
 
 		public Task<bool> ToggleServerMessages(bool enable);
@@ -66,7 +68,6 @@ namespace Neuralium.Cli.Classes.API {
 		public Task SetSMSConfirmationCode(string accountCode, long confirmationCode);
 		public Task SetSMSConfirmationCodeString(string accountCode, string confirmationCode);
 
-
 		public Task GenerateXmssKeyIndexNodeCache(string accountCode, byte ordinal, long index);
 		public Task<bool> CreateNewWallet(string accountName, int accountType, bool encryptWallet, bool encryptKey, bool encryptKeysIndividually);
 
@@ -108,6 +109,16 @@ namespace Neuralium.Cli.Classes.API {
 
 		public Task SetPuzzleAnswers(List<int> answers);
 
-		
+#if TESTNET || DEVNET
+		public Task<int> RefillNeuraliums(string accountCode);
+#endif
+#if COLORADO_EXCLUSION
+		public Task<bool> BypassAppointmentVerification(string accountCode);
+#endif
+
+		public Task<object> QueryElectionContext(long blockId);
+		public Task<List<object>> QueryNeuraliumTransactionPool();
+
+		public Task<bool> RestoreWalletNarballBackup(string source, string dest);
 	}
 }

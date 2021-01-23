@@ -45,6 +45,10 @@ namespace Neuralium.Cli.Classes.SignalR {
 			this.RegisterEvents(eventHandler);
 		}
 
+		public bool IsConnected()
+		{
+			return connection.State == HubConnectionState.Connected;
+		}
 		public async Task Connect() {
 			try {
 				await this.connection.StartAsync().ConfigureAwait(false);

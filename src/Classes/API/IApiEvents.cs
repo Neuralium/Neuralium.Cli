@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Neuralia.Blockchains.Core;
 
 namespace Neuralium.Cli.Classes.API {
 	public interface IApiEvents {
@@ -15,17 +16,16 @@ namespace Neuralium.Cli.Classes.API {
 		void RequestCopyWallet(int correlationId, ushort chainType);
 		void PeerTotalUpdated(int total);
 
-		// void BlockchainSyncStatusChanged(ushort chainType, Enums.ChainSyncState syncStatus);
-		// void WalletSyncStatusChanged(ushort chainType, Enums.ChainSyncState syncStatus);
+		void BlockchainSyncStatusChanged(ushort chainType, Enums.ChainSyncState syncStatus);
+		void WalletSyncStatusChanged(ushort chainType, Enums.ChainSyncState syncStatus);
 
 		void MiningStatusChanged(ushort chainType, bool isMining);
 
-		void walletCreationStarted(int correlationId);
+		void WalletCreationStarted(int correlationId);
 		void WalletCreationEnded(int correlationId);
 
 		void AccountCreationStarted(int correlationId);
-		void AccountCreationEnded(int correlationId, string accountCode);
-		
+		void AccountCreationEnded(int correlationId);
 		void AccountCreationMessage(int correlationId, string message);
 		void AccountCreationStep(int correlationId, string stepName, int stepIndex, int stepTotal);
 		void AccountCreationError(int correlationId, string error);

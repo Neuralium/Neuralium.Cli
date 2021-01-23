@@ -171,6 +171,9 @@ A `json` dictionary with various information. For example:
 		[Command(typeof(QueryNeuraliumTimelineSection), LongName = nameof(QueryNeuraliumTimelineSection), Description = "Query transactions timeline rows for a given day (object)")]
 		QueryNeuraliumTimelineSection,
 		// -----------------------------------------------------------------------------	
+		[Command(typeof(QueryNeuraliumTransactionPool), LongName = nameof(QueryNeuraliumTransactionPool), Description = "Query the current pool of transactions (List[object])")]
+		QueryNeuraliumTransactionPool,
+		// -----------------------------------------------------------------------------	
 		[Command(typeof(QueryPeerConnectionDetails), LongName = nameof(QueryPeerConnectionDetails), Description = "Query details about peers connection (object)")]
 		QueryPeerConnectionDetails,
 		// -----------------------------------------------------------------------------	
@@ -236,8 +239,11 @@ run SendNeuraliums jparams=[{'Name':'targetAccountId','Value':'{SF3}'},{'Name':'
 		[Command(typeof(RequestAppointment), LongName = nameof(RequestAppointment), Description = "Request an appointment (Note: you will need a GUI to perform the appointment) (bool)")]
 		RequestAppointment,
 		// -----------------------------------------------------------------------------	
-		[Command(typeof(RestoreWalletFromBackup), LongName = nameof(RestoreWalletFromBackup), Description = "Query the wallet's accounts (List[object])")]
+		[Command(typeof(RestoreWalletFromBackup), LongName = nameof(RestoreWalletFromBackup), Description = "Restores a wallet from a backup (bool)")]
 		RestoreWalletFromBackup,
+		// -----------------------------------------------------------------------------	
+		[Command(typeof(RestoreWalletNarballBackup), LongName = nameof(RestoreWalletNarballBackup), Description = "Restores a wallet 'narball' backup (bool)")]	
+		RestoreWalletNarballBackup,
 		// -----------------------------------------------------------------------------	
 		[Command(typeof(SetActiveAccount), LongName = nameof(SetActiveAccount), Description = "Set the wallet's active accounts (bool)")]
 		SetActiveAccount,
@@ -459,6 +465,7 @@ ValidatorHttp = 3
 	    public string AccountCode { get; set; }
     }
 
+    public class QueryNeuraliumTransactionPool : NamedOperation{}
     public class QueryNeuraliumTimelineSection : NamedOperation
     {
 	    [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "The account code, can be queried with and API command such as '" + nameof(ApiCommands.QueryDefaultWalletAccountCode) + "'")]
@@ -553,6 +560,13 @@ ValidatorHttp = 3
 	    public int Iterations { get; set; }
     }
 
+    public class RestoreWalletNarballBackup : NamedOperation
+    {
+	    [PositionalArgument(ArgumentFlags.Required, Position = 0)]
+	    public string sourcePath { get; set; }
+	    [PositionalArgument(ArgumentFlags.Required, Position = 1)]
+	    public string destinationPath { get; set; }
+    }
     public class GetMiningRegistrationIpMode : NamedOperation{}
 
     public class IsBlockchainSynced : NamedOperation{}
@@ -746,7 +760,7 @@ Depending on your encryption options, you will use a different subset of indices
 ```
 Occident = 1,
 Central = 2,
-Orient = 3 
+Orient = 4 
 ```")]
 	    public int PreferredRegion{ get; set; }
     }
