@@ -13,7 +13,7 @@ namespace Neuralium.Cli.Classes.API {
 		public Task EnterKeyPassphrase(int correlationId, int keyCorrelationCode, string passphrase);
 		public Task WalletKeyFileCopied(int correlationId, int keyCorrelationCode);
 
-		public Task<bool> TestP2pPort(int testPort, bool callback);
+		public Task<int> TestP2pPort(int testPort, bool callback);
 		
 		public Task<object> QuerySystemInfo();
 		public Task<List<object>> QuerySupportedChains();

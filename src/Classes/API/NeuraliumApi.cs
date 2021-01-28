@@ -1106,9 +1106,9 @@ namespace Neuralium.Cli.Classes.API {
 			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {correlationId, chainType, keyCorrelationCode}).ConfigureAwait(false);
 		}
 
-		public async Task<bool> TestP2pPort(int testPort, bool callback)
+		public async Task<int> TestP2pPort(int testPort, bool callback)
 		{
-			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {testPort, callback}).ConfigureAwait(false);
+			return await this.signalrClient.InvokeMethod<int>(this.GetCallingMethodName(), new object[] {testPort, callback}).ConfigureAwait(false);
 		}
 
 		public async Task<List<object>> QuerySupportedChains() {

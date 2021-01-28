@@ -272,7 +272,23 @@ run SendNeuraliums jparams=[{'Name':'targetAccountId','Value':'{SF3}'},{'Name':'
 		[Command(typeof(Test), LongName = nameof(Test), Description = "Tests the server")]
 		Test,
 		// -----------------------------------------------------------------------------	
-		[Command(typeof(TestP2pPort), LongName = nameof(TestP2pPort), Description = "Tests p2p port")]
+		[Command(typeof(TestP2pPort), LongName = nameof(TestP2pPort), Description = @"Tests p2p port
+### Return Value
+
+The return value is a bit field, so it can be sum of many of the following values
+```
+	Failed = 0 (bit 0),
+	Success = 1 (bit 1),
+	RequestCallback = 2 (bit 2),
+
+	CallbackAttempted = 4 (bit 3),
+	CallbackSucceeded = 8 (bit 4),
+
+	Ipv6 = 64 (bit 6),
+	IsValidator = 128 (bit 7)
+```
+
+")]
 		TestP2pPort,
 		// -----------------------------------------------------------------------------	
 		[Command(typeof(ToggleServerMessages), LongName = nameof(ToggleServerMessages), Description = "Enable/Disable server messages")]
@@ -412,11 +428,9 @@ run SendNeuraliums jparams=[{'Name':'targetAccountId','Value':'{SF3}'},{'Name':'
     public class TestP2pPort : NamedOperation
     {
 	    [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = @"Which port 
-```
-P2p = 1,
-Validator = 2,  
-ValidatorHttp = 3
-```")]
+   * P2p = 1,
+   * Validator = 2,  
+   * ValidatorHttp = 3")]
 	    public int TestPort { get; set; }
 	    [PositionalArgument(ArgumentFlags.Required, Position = 1, Description = "Use callback?")]
 	    public bool Callback { get; set; }
@@ -601,10 +615,8 @@ ValidatorHttp = 3
 	    public string AccountName { get; set; }
 	    
 	    [PositionalArgument(ArgumentFlags.Required, Position = 1, Description = @"The type of account
-```
-User = 1,
-Server = 2
-```"
+     * User = 1,
+     * Server = 2"
 	    )]
 	    public int AccountType{ get; set; }
 	    
@@ -646,10 +658,9 @@ Depending on your encryption options, you will use a different subset of indices
 	    public string AccountName { get; set; }
 	    
 	    [PositionalArgument(ArgumentFlags.Required, Position = 1, Description = @"The type of account
-```
-User = 1,
-Server = 2
-```")]
+   * User = 1,
+   * Server = 2
+")]
 	    public int AccountType{ get; set; }
 	    
 	    [PositionalArgument(ArgumentFlags.Required, Position = 2, Description = @"Whether to encrypt the wallet or not
@@ -757,11 +768,10 @@ Depending on your encryption options, you will use a different subset of indices
 	    public string AccountCode{ get; set; }
 	    
 	    [PositionalArgument(ArgumentFlags.Required, Position = 1, Description = @"The appointment region (timezone) can be one of:
-```
-Occident = 1,
-Central = 2,
-Orient = 4 
-```")]
+   * Occident = 1,
+   * Central = 2,
+   * Orient = 4 
+")]
 	    public int PreferredRegion{ get; set; }
     }
     public class QueryAccountTotalNeuraliums : NamedOperation
