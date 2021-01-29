@@ -105,6 +105,7 @@ namespace Neuralium.Cli.Classes.Runtime.Commands
             catch(Exception ex) {
                 
                 NLog.Default.Error(ex, "Failed to query method.");
+                Console.WriteLine("Failed to query method. Look at the log for more information.");
                 return Task.FromResult(CommandResult.RuntimeFailure);
             }
             

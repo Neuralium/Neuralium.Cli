@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Neuralia.Blockchains.Core;
@@ -204,7 +205,7 @@ namespace Neuralium.Cli.Classes.API {
 				
 			}
 
-			return result == null ? "" : JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
+			return result == null ? "" : JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true, ReferenceHandler = ReferenceHandler.Preserve});
 		}
 
 		private static bool DeserializeParameter(string serialized, Type type, out object result) {
@@ -908,8 +909,9 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
 		}
 
-		public async Task<object> QueryBlockChainInfo() {
-			return this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {chainType});
+		public async Task<object> QueryBlockChainInfo() 
+		{
+			return await signalrClient.InvokeMethod<object>(GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
 		}
 
 		public async Task<bool> ClearAppointment(string accountCode)
@@ -918,7 +920,7 @@ namespace Neuralium.Cli.Classes.API {
 		}
 
 		public async Task<object> CanPublishAccount(string accountCode) {
-			return await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {chainType, accountCode}).ConfigureAwait(false);
+			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {chainType, accountCode}).ConfigureAwait(false);
 		}
 
 		public async Task SetSMSConfirmationCode(string accountCode, long confirmationCode)
@@ -1051,12 +1053,12 @@ namespace Neuralium.Cli.Classes.API {
 
 		public async Task<object> QueryNeuraliumTimelineHeader(string accountCode)
 		{
-			return await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {accountCode}).ConfigureAwait(false);
+			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {accountCode}).ConfigureAwait(false);
 		}
 
 		public async Task<object> QueryNeuraliumTimelineSection(string accountCode, DateTime day)
 		{
-			return await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {accountCode, day}).ConfigureAwait(false);
+			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {accountCode, day}).ConfigureAwait(false);
 		}
 
 		public async Task<byte[]> SignXmssMessage(string accountCode, byte[] message)
@@ -1066,7 +1068,7 @@ namespace Neuralium.Cli.Classes.API {
 
 		public async Task SetPuzzleAnswers(List<int> answers)
 		{
-			await this.signalrClient.InvokeMethod<byte[]>(this.GetCallingMethodName(), new object[] {chainType, answers}).ConfigureAwait(false);
+			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {chainType, answers}).ConfigureAwait(false);
 		}
 #if COLORADO_EXCLUSION
 		public async Task<bool> BypassAppointmentVerification(string accountCode) {
@@ -1075,7 +1077,7 @@ namespace Neuralium.Cli.Classes.API {
 #endif
 		public async Task<object> QueryElectionContext(ushort chainType, long blockId)
 		{
-			return await this.signalrClient.InvokeMethod<List<object>>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
+			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
 		}
 
 		public async Task<bool> RestoreWalletNarballBackup(string source, string dest)
@@ -1305,7 +1307,7 @@ namespace Neuralium.Cli.Classes.API {
 
 		public async Task<object> QueryWalletTransactionHistoryDetails(string accountCode, string transactionId)
 		{
-			return await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {chainType, accountCode, transactionId}).ConfigureAwait(false);
+			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {chainType, accountCode, transactionId}).ConfigureAwait(false);
 		}
 
 		public async Task<List<object>> QueryWalletAccounts() {
@@ -1324,17 +1326,17 @@ namespace Neuralium.Cli.Classes.API {
 
 		public async Task<object> QueryWalletAccountDetails(string accountCode)
 		{
-			return await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {chainType, accountCode}).ConfigureAwait(false);
+			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {chainType, accountCode}).ConfigureAwait(false);
 		}
 
 		public async Task<object> QuerySystemInfo()
 		{
-			return await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
+			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {}).ConfigureAwait(false);
 		}
 		
 		public async Task<object> QueryWalletAccountAppointmentDetails(string accountCode)
 		{
-			return await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {chainType, accountCode}).ConfigureAwait(false);
+			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {chainType, accountCode}).ConfigureAwait(false);
 		}
 
 		public async Task<string> QueryWalletAccountPresentationTransactionId(string accountCode)
