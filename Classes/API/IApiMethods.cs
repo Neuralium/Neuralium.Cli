@@ -4,12 +4,13 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 
 
+
 namespace Neuralium.Cli.Classes.API {
 	
 	public interface IApiMethods {
 
 		public Task<bool> ToggleServerMessages(bool enable);
-		public Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase);
+		public Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase, bool setKeysToo = false);
 		public Task EnterKeyPassphrase(int correlationId, int keyCorrelationCode, string passphrase);
 		public Task WalletKeyFileCopied(int correlationId, int keyCorrelationCode);
 
@@ -37,7 +38,8 @@ namespace Neuralium.Cli.Classes.API {
 		public Task<bool> Shutdown();
 		public Task<object> BackupWallet();
 		public Task<bool> RestoreWalletFromBackup(string backupsPath, string passphrase, string salt, string nonce, int iterations);
-
+		public Task<bool> AttemptWalletRescue();
+		
 		public Task<int> QueryTotalConnectedPeersCount();
 		
 		public Task<List<object>> QueryPeerConnectionDetails();

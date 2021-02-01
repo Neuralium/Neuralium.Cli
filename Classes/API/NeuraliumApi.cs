@@ -321,7 +321,7 @@ namespace Neuralium.Cli.Classes.API {
 		public async void EnterWalletPassphrase(int correlationId, ushort chainType, int keyCorrelationId, int attempt)
 		{
 			PrintEvent(LogLevel.Information, "", correlationId, $"Enter your wallet passphrase (this is attempt number {attempt}):.");
-			await this.EnterWalletPassphrase(correlationId, keyCorrelationId, null).ConfigureAwait(false);
+			await this.EnterWalletPassphrase(correlationId, keyCorrelationId, null, false).ConfigureAwait(false);
 		}
 
 
@@ -889,6 +889,11 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {backupsPath, passphrase, salt, nonce, iterations}).ConfigureAwait(false);
 		}
 
+		public async Task<bool> AttemptWalletRescue()
+		{
+			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
+		}
+
 		public async Task<int> QueryTotalConnectedPeersCount()
 		{
 			return await this.signalrClient.InvokeMethod<int>(this.GetCallingMethodName(), new object[] {}).ConfigureAwait(false);
@@ -1085,11 +1090,11 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {chainType, source, dest}).ConfigureAwait(false);
 		}
 
-		public async Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase)
+		public async Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase, bool setKeysToo)
 		{
 			var pwd = AskPassphrase(passphrase);
 			
-			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {correlationId, chainType, keyCorrelationCode, pwd.ConvertToUnsecureString(), false}).ConfigureAwait(false);
+			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {correlationId, chainType, keyCorrelationCode, pwd.ConvertToUnsecureString(), setKeysToo}).ConfigureAwait(false);
 		}
 
 		public async Task<bool> ToggleServerMessages(bool enable)

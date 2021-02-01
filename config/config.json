@@ -1,0 +1,31 @@
+{
+  "AppSettings": {
+    "EnabledLoggers": []
+  },
+  "ConnectionStrings": {
+
+  },
+  "Logging": {
+    "IncludeScopes": false,
+    "Debug": {
+      "LogLevel": {
+        "Default": "Information",
+        "Microsoft": "Information"
+      }
+    },
+    "Console": {
+      "LogLevel": {
+        "Default": "Information",
+        "Microsoft": "Information"
+      }
+    }
+  },
+  "Serilog": {
+      "WriteTo": [{ "Name": "File", "Args": { "path": "log.txt", "rollingInterval": "Day", "outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties}{NewLine}{Exception}" } }],
+      "Enrich": ["WithExceptionDetails", "WithThreadId" ],
+      "Properties": {
+
+      }
+  }
+
+}
