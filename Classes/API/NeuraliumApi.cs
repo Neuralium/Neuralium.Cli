@@ -1007,6 +1007,11 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod<List<object>>(this.GetCallingMethodName(), new object[] {}).ConfigureAwait(false);
 		}
 
+		public async Task<bool> ResetWalletIndex()
+		{
+			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);;
+		}
+
 		public async Task<long> QueryLowestAccountBlockSyncHeight()
 		{
 			return await this.signalrClient.InvokeMethod<long>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
@@ -1090,6 +1095,16 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {chainType, source, dest}).ConfigureAwait(false);
 		}
 
+		public async Task<object> ReadAppSetting(string name)
+		{
+			
+			return await this.signalrClient.InvokeMethod<object>(this.GetCallingMethodName(), new object[] {name}).ConfigureAwait(false);
+		}
+		
+		public async Task<bool> WriteAppSetting(string name, string value)
+		{
+			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {name, value}).ConfigureAwait(false);
+		}
 		public async Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase, bool setKeysToo)
 		{
 			var pwd = AskPassphrase(passphrase);
@@ -1129,6 +1144,11 @@ namespace Neuralium.Cli.Classes.API {
 
 		public async Task<long> QueryBlockHeight() {
 			return await this.signalrClient.InvokeMethod<long>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
+		}
+
+		public async Task<int> QueryDigestHeight()
+		{
+			return await this.signalrClient.InvokeMethod<int>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
 		}
 
 		public async Task<object> QueryChainStatus() {

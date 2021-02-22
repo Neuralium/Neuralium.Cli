@@ -54,6 +54,8 @@ namespace Neuralium.Cli.Classes.API {
 		public Task<bool> WalletExists();
 		public Task<bool> LoadWallet(string passphrase = null);
 		public Task<long> QueryBlockHeight();
+		Task<int> QueryDigestHeight();
+		Task<bool> ResetWalletIndex();
 		public Task<long> QueryLowestAccountBlockSyncHeight();
 		public Task<string> QueryBlock(long blockId);
 		Task<object> QueryDecomposedBlock(long blockId);
@@ -120,7 +122,8 @@ namespace Neuralium.Cli.Classes.API {
 
 		public Task<object> QueryElectionContext(long blockId);
 		public Task<List<object>> QueryNeuraliumTransactionPool();
-
 		public Task<bool> RestoreWalletNarballBackup(string source, string dest);
+		public Task<object> ReadAppSetting(string name);
+		public Task<bool> WriteAppSetting(string name, string value);
 	}
 }

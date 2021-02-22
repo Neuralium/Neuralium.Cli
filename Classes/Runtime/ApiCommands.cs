@@ -232,12 +232,18 @@ Note that the `'accountId'` field, when prefixed with a '*' like above, is a pro
 		[Command(typeof(QueryWalletSynced), LongName = nameof(QueryWalletSynced), Description = "Query if wallet is fully synced (bool)")]
 		QueryWalletSynced,
 		// -----------------------------------------------------------------------------	
+		[Command(typeof(ReadAppSetting), LongName = "ReadAppSetting", Description = "Read application setting 'name' (object)")]
+		ReadAppSetting,
+		// -----------------------------------------------------------------------------	
         [Command(typeof(GenericOperation), ShortName = "r", LongName = "run", Description = @"Run an operation by name, allows you to use the --jparams option. For example:
 run SendNeuraliums jparams=[{'Name':'targetAccountId','Value':'{SF3}'},{'Name':'amount','Value':'1.1'}]")]
         Run,
         // -----------------------------------------------------------------------------	
 		[Command(typeof(RequestAppointment), LongName = nameof(RequestAppointment), Description = "Request an appointment (Note: you will need a GUI to perform the appointment) (bool)")]
 		RequestAppointment,
+		// -----------------------------------------------------------------------------	
+		[Command(typeof(ResetWalletIndex), LongName = nameof(ResetWalletIndex), Description = "Resets the wallet indexing (bool)")]
+		ResetWalletIndex,
 		// -----------------------------------------------------------------------------	
 		[Command(typeof(RestoreWalletFromBackup), LongName = nameof(RestoreWalletFromBackup), Description = "Restores a wallet from a backup (bool)")]
 		RestoreWalletFromBackup,
@@ -296,6 +302,9 @@ The return value is a bit field, so it can be sum of many of the following value
 		// -----------------------------------------------------------------------------	
         [Command(typeof(WalletExists), LongName = nameof(WalletExists), Description = "Can the wallet be found? (bool)")]
 		WalletExists,
+		// -----------------------------------------------------------------------------	
+		[Command(typeof(WriteAppSetting), LongName = nameof(WriteAppSetting), Description = "Write/modify an a setting in config.json's AppSettings section")]	
+		WriteAppSetting,
 		// -----------------------------------------------------------------------------	
 		[Command(typeof(ExitCommand), LongName = "exit", Description = "Exits the shell")]
         Exit,
@@ -604,6 +613,13 @@ The return value is a bit field, so it can be sum of many of the following value
     }
     public class WalletExists : NamedOperation{}
 
+    public class WriteAppSetting : NamedOperation
+    {
+	    [PositionalArgument(ArgumentFlags.Optional, Position = 0, Description = "The setting name (e.g. 'Port')")]
+	    public string Name { get; set; }
+	    [PositionalArgument(ArgumentFlags.Optional, Position = 1, Description = "The setting value (e.g. 33888)")]
+	    public string Value { get; set; }
+    }
     public class Test : NamedOperation{}
     public class Ping : NamedOperation{}
     public class Shutdown : NamedOperation{}
@@ -707,10 +723,10 @@ Depending on your encryption options, you will use a different subset of indices
     }
     public class StartMining : NamedOperation
     {
-	    [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "The account id to mine with, it can be obtained with and API command such as '" + nameof(ApiCommands.QueryWalletAccounts) + "'")]
+	    [PositionalArgument(ArgumentFlags.Optional, Position = 0, DefaultValue = null, Description = "(Optional, leave default value to use your own account as the delegate) The account id to to send your rewards to.")]
 	    public string DelegateAccountId{ get; set; }
 	    
-	    [PositionalArgument(ArgumentFlags.Required, Position = 1, Description = "The desired mining Tier (1,2,3 or 4)")]
+	    [PositionalArgument(ArgumentFlags.Optional, Position = 1, DefaultValue = 0, Description = "(Optional, leave default to use the best available tier for you) The desired mining Tier (1,2,3 or 4)")]
 	    public int Tier{ get; set; }
     }
     public class StopMining : NamedOperation{}
@@ -774,6 +790,14 @@ Depending on your encryption options, you will use a different subset of indices
 ")]
 	    public int PreferredRegion{ get; set; }
     }
+
+    public class ReadAppSetting : NamedOperation
+    {
+	    [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "The setting name (e.g. 'Port'). You can use '*' to read all settings.")]
+	    public string Name{ get; set; }
+    }
+
+    public class ResetWalletIndex : NamedOperation{ }
     public class QueryAccountTotalNeuraliums : NamedOperation
     {
 	    [PositionalArgument(ArgumentFlags.Required, Position = 0, Description = "The account code, can be queried with and API command such as '" + nameof(ApiCommands.QueryDefaultWalletAccountCode) + "'")]
