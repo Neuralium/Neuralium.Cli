@@ -122,6 +122,26 @@ namespace Neuralium.Cli.Classes.API {
 		public async Task Connect()
 		{
 			await this.signalrClient.Connect().ConfigureAwait(false);
+			
+			if (!string.IsNullOrEmpty(this.signalrClient.User))
+			{
+				PrintEvent(LogLevel.Information, nameof(Login), $"will now try to login with user {this.signalrClient.User}...");
+
+				for (int chances = 3; chances > 0; chances--)
+				{
+					if (await this.Login(this.signalrClient.User, null).ConfigureAwait(false))
+					{
+						PrintEvent(LogLevel.Information, nameof(Login), $"login successful!");
+						return;
+					}
+					PrintEvent(LogLevel.Information, nameof(Login), $"{nameof(NeuraliumApi)} Login({this.signalrClient.User}, ***) returned false, please try again, you have {chances-1} chances left");
+				}
+
+				await Disconnect().ConfigureAwait(false);
+				
+				throw new ArgumentException("Wrong login information");
+				
+			}
 		}
 
 		public async Task Disconnect()
@@ -884,9 +904,9 @@ namespace Neuralium.Cli.Classes.API {
 			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
 		}
 
-		public async Task<bool> RestoreWalletFromBackup(string backupsPath, string passphrase, string salt, string nonce, int iterations)
+		public async Task<bool> RestoreWalletFromBackup(string backupsPath, string passphrase, string salt, string nonce, int iterations, bool legacyBase32)
 		{
-			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {backupsPath, passphrase, salt, nonce, iterations}).ConfigureAwait(false);
+			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {backupsPath, passphrase, salt, nonce, iterations, legacyBase32}).ConfigureAwait(false);
 		}
 
 		public async Task<bool> AttemptWalletRescue()
@@ -902,6 +922,11 @@ namespace Neuralium.Cli.Classes.API {
 		public async Task<List<object>> QueryPeerConnectionDetails()
 		{
 			return await this.signalrClient.InvokeMethod<List<object>>(this.GetCallingMethodName(), new object[] {}).ConfigureAwait(false);
+		}
+
+		public async Task<bool> DynamicPeerOperation(string ip, int port, int operation)
+		{
+			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {ip, port, operation}).ConfigureAwait(false);
 		}
 
 		public async Task<bool> QueryMiningPortConnectable()
@@ -996,6 +1021,11 @@ namespace Neuralium.Cli.Classes.API {
 		public async Task<bool> QueryWalletSynced()
 		{
 			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {chainType}).ConfigureAwait(false);
+		}
+
+		public async Task<string> GenerateTestPuzzle()
+		{
+			return await this.signalrClient.InvokeMethod<string>(this.GetCallingMethodName(), new object[] {}).ConfigureAwait(false);
 		}
 
 		public async Task<object> QueryElectionContext(long blockId) {
@@ -1105,11 +1135,23 @@ namespace Neuralium.Cli.Classes.API {
 		{
 			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {name, value}).ConfigureAwait(false);
 		}
+
+		public async Task<object> ReadAppSettingDomain(string name)
+		{
+			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {name}).ConfigureAwait(false);
+		}
+
 		public async Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase, bool setKeysToo)
 		{
 			var pwd = AskPassphrase(passphrase);
 			
 			await this.signalrClient.InvokeMethod(this.GetCallingMethodName(), new object[] {correlationId, chainType, keyCorrelationCode, pwd.ConvertToUnsecureString(), setKeysToo}).ConfigureAwait(false);
+		}
+
+		public async Task<bool> Login(string user, string password)
+		{
+			var pwd = AskPassphrase(password);
+			return await this.signalrClient.InvokeMethod<bool>(this.GetCallingMethodName(), new object[] {user, pwd.ConvertToUnsecureString()}).ConfigureAwait(false);
 		}
 
 		public async Task<bool> ToggleServerMessages(bool enable)

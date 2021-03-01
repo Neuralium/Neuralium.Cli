@@ -2,128 +2,129 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
-
-
+using Neuralia.Blockchains.Core;
 
 namespace Neuralium.Cli.Classes.API {
 	
 	public interface IApiMethods {
 
-		public Task<bool> ToggleServerMessages(bool enable);
-		public Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase, bool setKeysToo = false);
-		public Task EnterKeyPassphrase(int correlationId, int keyCorrelationCode, string passphrase);
-		public Task WalletKeyFileCopied(int correlationId, int keyCorrelationCode);
+		Task<bool> Login(string user, string password);
+		Task<bool> ToggleServerMessages(bool enable);
+		Task EnterWalletPassphrase(int correlationId, int keyCorrelationCode, string passphrase, bool setKeysToo = false);
+		Task EnterKeyPassphrase(int correlationId, int keyCorrelationCode, string passphrase);
+		Task WalletKeyFileCopied(int correlationId, int keyCorrelationCode);
 
-		public Task<int> TestP2pPort(int testPort, bool callback);
+		Task<int> TestP2pPort(int testPort, bool callback);
 		
-		public Task<object> QuerySystemInfo();
-		public Task<List<object>> QuerySupportedChains();
-		public Task<bool> Ping();
-		public Task<object> GetPortMappingStatus();
-		public Task<bool> ConfigurePortMappingMode(bool useUPnP, bool usePmP, int natDeviceIndex);
+		Task<object> QuerySystemInfo();
+		Task<List<object>> QuerySupportedChains();
+		Task<bool> Ping();
+		Task<object> GetPortMappingStatus();
+		Task<bool> ConfigurePortMappingMode(bool useUPnP, bool usePmP, int natDeviceIndex);
 
-		public Task<byte> GetPublicIPMode();
+		Task<byte> GetPublicIPMode();
 
-		public Task SetUILocale(string locale);
-		public Task<byte> GetMiningRegistrationIpMode();
+		Task SetUILocale(string locale);
+		Task<byte> GetMiningRegistrationIpMode();
 
-		public Task<bool> CompleteLongRunningEvent(int correlationId, object data);
-		public Task<bool> RenewLongRunningEvent(int correlationId);
+		Task<bool> CompleteLongRunningEvent(int correlationId, object data);
+		Task<bool> RenewLongRunningEvent(int correlationId);
 
-		public Task<bool> IsBlockchainSynced();
-		public Task<bool> IsWalletSynced();
+		Task<bool> IsBlockchainSynced();
+		Task<bool> IsWalletSynced();
 
-		public Task<int> GetCurrentOperatingMode();
-		public Task<bool> SyncBlockchain(bool force);
-		public Task<bool> Shutdown();
-		public Task<object> BackupWallet();
-		public Task<bool> RestoreWalletFromBackup(string backupsPath, string passphrase, string salt, string nonce, int iterations);
-		public Task<bool> AttemptWalletRescue();
+		Task<int> GetCurrentOperatingMode();
+		Task<bool> SyncBlockchain(bool force);
+		Task<bool> Shutdown();
+		Task<object> BackupWallet();
+		Task<bool> RestoreWalletFromBackup(string backupsPath, string passphrase, string salt, string nonce, int iterations, bool legacyBase32);
+		Task<bool> AttemptWalletRescue();
 		
-		public Task<int> QueryTotalConnectedPeersCount();
-		
-		public Task<List<object>> QueryPeerConnectionDetails();
-		
-		public Task<bool> QueryMiningPortConnectable();
-		public Task<object> QueryChainStatus();
-		public Task<object> QueryWalletInfo();
+		Task<int> QueryTotalConnectedPeersCount();
+		Task<List<object>> QueryPeerConnectionDetails();
+		Task<bool> DynamicPeerOperation(string ip, int port, int operation);
+		Task<bool> QueryMiningPortConnectable();
+		Task<object> QueryChainStatus();
+		Task<object> QueryWalletInfo();
 
-		public Task<object> QueryBlockChainInfo();
+		Task<object> QueryBlockChainInfo();
 
-		public Task<bool> IsWalletLoaded();
-		public Task<bool> WalletExists();
-		public Task<bool> LoadWallet(string passphrase = null);
-		public Task<long> QueryBlockHeight();
+		Task<bool> IsWalletLoaded();
+		Task<bool> WalletExists();
+		Task<bool> LoadWallet(string passphrase = null);
+		Task<long> QueryBlockHeight();
 		Task<int> QueryDigestHeight();
 		Task<bool> ResetWalletIndex();
-		public Task<long> QueryLowestAccountBlockSyncHeight();
-		public Task<string> QueryBlock(long blockId);
+		Task<long> QueryLowestAccountBlockSyncHeight();
+		Task<string> QueryBlock(long blockId);
 		Task<object> QueryDecomposedBlock(long blockId);
 		Task<string> QueryDecomposedBlockJson(long blockId);
-		public Task<byte[]> QueryCompressedBlock(long blockId);
-		public Task<byte[]> QueryBlockBytes(long blockId);
-		public Task<string> GetBlockSizeAndHash(long blockId);
-		public Task<List<object>> QueryBlockBinaryTransactions(long blockId);
-		public Task<bool> CreateStandardAccount(string accountName, int accountType, bool publishAccount, bool encryptKeys, bool encryptKeysIndividually);
-		public Task<bool> SetActiveAccount(string accountCode);
-		public Task<object> QueryAppointmentConfirmationResult(string accountCode);
-		public Task<bool> ClearAppointment(string accountCode);
-		public Task<object> CanPublishAccount(string accountCode);
-		public Task SetSMSConfirmationCode(string accountCode, long confirmationCode);
-		public Task SetSMSConfirmationCodeString(string accountCode, string confirmationCode);
+		Task<byte[]> QueryCompressedBlock(long blockId);
+		Task<byte[]> QueryBlockBytes(long blockId);
+		Task<string> GetBlockSizeAndHash(long blockId);
+		Task<List<object>> QueryBlockBinaryTransactions(long blockId);
+		Task<bool> CreateStandardAccount(string accountName, int accountType, bool publishAccount, bool encryptKeys, bool encryptKeysIndividually);
+		Task<bool> SetActiveAccount(string accountCode);
+		Task<object> QueryAppointmentConfirmationResult(string accountCode);
+		Task<bool> ClearAppointment(string accountCode);
+		Task<object> CanPublishAccount(string accountCode);
+		Task SetSMSConfirmationCode(string accountCode, long confirmationCode);
+		Task SetSMSConfirmationCodeString(string accountCode, string confirmationCode);
 
-		public Task GenerateXmssKeyIndexNodeCache(string accountCode, byte ordinal, long index);
-		public Task<bool> CreateNewWallet(string accountName, int accountType, bool encryptWallet, bool encryptKey, bool encryptKeysIndividually);
+		Task GenerateXmssKeyIndexNodeCache(string accountCode, byte ordinal, long index);
+		Task<bool> CreateNewWallet(string accountName, int accountType, bool encryptWallet, bool encryptKey, bool encryptKeysIndividually);
 
-		public Task<bool> SetWalletPassphrase(int correlationId, string passphrase, bool setKeysToo = false);
-		public Task<bool> SetKeysPassphrase(int correlationId, string passphrase);
+		Task<bool> SetWalletPassphrase(int correlationId, string passphrase, bool setKeysToo = false);
+		Task<bool> SetKeysPassphrase(int correlationId, string passphrase);
 
-		public Task<List<object>> QueryWalletTransactionHistory(string accountCode);
-		public Task<object> QueryWalletTransactionHistoryDetails(string accountCode, string transactionId);
-		public Task<List<object>> QueryWalletAccounts();
-		public Task<string> QueryDefaultWalletAccountId();
-		public Task<string> QueryDefaultWalletAccountCode();
-		public Task<object> QueryWalletAccountDetails(string accountCode);
-		public Task<object> QueryWalletAccountAppointmentDetails(string accountCode);
-		public Task<string> QueryWalletAccountPresentationTransactionId(string accountCode);
+		Task<List<object>> QueryWalletTransactionHistory(string accountCode);
+		Task<object> QueryWalletTransactionHistoryDetails(string accountCode, string transactionId);
+		Task<List<object>> QueryWalletAccounts();
+		Task<string> QueryDefaultWalletAccountId();
+		Task<string> QueryDefaultWalletAccountCode();
+		Task<object> QueryWalletAccountDetails(string accountCode);
+		Task<object> QueryWalletAccountAppointmentDetails(string accountCode);
+		Task<string> QueryWalletAccountPresentationTransactionId(string accountCode);
 
-		public Task<string> Test(string data);
-		public Task<bool> RequestAppointment(string accountCode, int preferredRegion);
-		public Task<bool> PublishAccount(string accountCode);
-		public Task StartMining(string delegateAccountId, int tier = 0);
-		public Task StopMining();
-		public Task<bool> IsMiningEnabled();
-		public Task<bool> IsMiningAllowed();
-		public Task<bool> QueryBlockchainSynced();
-		public Task<bool> QueryWalletSynced();
-		public Task<object> QueryAccountTotalNeuraliums(string accountCode);
-		public Task<List<object>> QueryMiningHistory(int page, int pageSize, byte maxLevel);
-		public Task<object> QueryMiningStatistics();
-		public Task<bool> ClearCachedCredentials();
+		Task<string> Test(string data);
+		Task<bool> RequestAppointment(string accountCode, int preferredRegion);
+		Task<bool> PublishAccount(string accountCode);
+		Task StartMining(string delegateAccountId, int tier = 0);
+		Task StopMining();
+		Task<bool> IsMiningEnabled();
+		Task<bool> IsMiningAllowed();
+		Task<bool> QueryBlockchainSynced();
+		Task<bool> QueryWalletSynced();
+		Task<string> GenerateTestPuzzle();
+		Task<object> QueryAccountTotalNeuraliums(string accountCode);
+		Task<List<object>> QueryMiningHistory(int page, int pageSize, byte maxLevel);
+		Task<object> QueryMiningStatistics();
+		Task<bool> ClearCachedCredentials();
 
-		public Task<long> QueryCurrentDifficulty();
+		Task<long> QueryCurrentDifficulty();
 
-		public Task<bool> CreateNextXmssKey(string accountCode, byte ordinal);
+		Task<bool> CreateNextXmssKey(string accountCode, byte ordinal);
 
-		public Task<bool> SendNeuraliums(string targetAccountId, decimal amount, decimal fees, string note);
-		public Task<object> QueryNeuraliumTimelineHeader(string accountCode);
-		public Task<object> QueryNeuraliumTimelineSection(string accountCode, DateTime day);
+		Task<bool> SendNeuraliums(string targetAccountId, decimal amount, decimal fees, string note);
+		Task<object> QueryNeuraliumTimelineHeader(string accountCode);
+		Task<object> QueryNeuraliumTimelineSection(string accountCode, DateTime day);
 
-		public Task<byte[]> SignXmssMessage(string accountCode, byte[] message);
+		Task<byte[]> SignXmssMessage(string accountCode, byte[] message);
 
-		public Task SetPuzzleAnswers(List<int> answers);
+		Task SetPuzzleAnswers(List<int> answers);
 
 #if TESTNET || DEVNET
-		public Task<int> RefillNeuraliums(string accountCode);
+		Task<int> RefillNeuraliums(string accountCode);
 #endif
 #if COLORADO_EXCLUSION
-		public Task<bool> BypassAppointmentVerification(string accountCode);
+		Task<bool> BypassAppointmentVerification(string accountCode);
 #endif
 
-		public Task<object> QueryElectionContext(long blockId);
-		public Task<List<object>> QueryNeuraliumTransactionPool();
-		public Task<bool> RestoreWalletNarballBackup(string source, string dest);
-		public Task<object> ReadAppSetting(string name);
-		public Task<bool> WriteAppSetting(string name, string value);
+		Task<object> QueryElectionContext(long blockId);
+		Task<List<object>> QueryNeuraliumTransactionPool();
+		Task<bool> RestoreWalletNarballBackup(string source, string dest);
+		Task<object> ReadAppSetting(string name);
+		Task<bool> WriteAppSetting(string name, string value);
+		Task<object> ReadAppSettingDomain(string name);
 	}
 }

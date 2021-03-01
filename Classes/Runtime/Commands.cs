@@ -73,7 +73,7 @@ namespace Neuralium.Cli.Classes.Runtime.Commands
         
         public override Task<CommandResult> ExecuteAsync(CancellationToken cancel)
         {
-            string call = $"operation {operationName}, {this.parameters.Count} param(s): [{String.Join(", ", this.parameters.ToArray())}]";
+            string call = $"operations {operationName}, {this.parameters.Count} param(s): [{String.Join(", ", this.parameters.ToArray())}]";
             
             Console.WriteLine(call);
             NLog.Default.Information(call);

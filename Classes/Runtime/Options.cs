@@ -14,9 +14,11 @@ namespace Neuralium.Cli.Classes.Runtime {
 		[NamedArgument(ArgumentFlags.Optional, ShortName = "r", LongName = "runtime-mode", DefaultValue = "", Description = "Are we running this in docker or not.")]
 		public string RuntimeMode { get; set; }
 		
+		[NamedArgument(ArgumentFlags.Optional, ShortName = "u", LongName = "user", DefaultValue = "", Description = "The username, only necessary if  'RpcAuthentication':'Basic' is used on the node")]
+		public string User{get; set; }
+		
 		[PositionalArgument(ArgumentFlags.Optional, Position = 0)]
 		public CommandGroup<ApiCommands> ApiCommand { get; set; }
-		
 		
 	}
 }

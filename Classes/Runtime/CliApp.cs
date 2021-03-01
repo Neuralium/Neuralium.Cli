@@ -48,9 +48,9 @@ namespace Neuralium.Cli.Classes.Runtime {
 
 			try {
 				await this.api.Connect().ConfigureAwait(false);
-
 			} catch(Exception ex) {
-				throw new ApplicationException("Failed to run daemon", ex);
+				Console.WriteLine($"Failed to run daemon: {ex.Message}, will now shutdown....");
+				Shutdown();
 			}
 		}
 
@@ -59,7 +59,7 @@ namespace Neuralium.Cli.Classes.Runtime {
 			{
 				var result = loop.ExecuteOnce(c =>
 				{
-					if (c is CommandGroup<Neuralium.Cli.Classes.Runtime.ApiCommands> group)
+					if (c is CommandGroup<ApiCommands> group)
 					{
 						if (group.InstantiatedCommand is CommandBase<API, API_METHODS> command)
 						{

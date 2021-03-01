@@ -14,12 +14,12 @@ namespace Neuralium.Cli.Classes.SignalR {
 
 	public class SignalrClient {
 		private readonly HubConnection connection;
-
+		private readonly string user;
 		public SignalrClient(AppSettings appSettings, OptionsBase options) {
 
 			string host = appSettings.Host;
 			int port = appSettings.RpcPort;
-
+			user = appSettings.User;
 			if(!string.IsNullOrWhiteSpace(options.Host)) {
 				host = options.Host;
 			}
@@ -28,8 +28,17 @@ namespace Neuralium.Cli.Classes.SignalR {
 				port = options.Port.Value;
 			}
 
-			this.connection = new HubConnectionBuilder().WithUrl(new UriBuilder(appSettings.UseTls ? "https" : "http", host, port, "signal").ToString()).WithAutomaticReconnect().AddJsonProtocol(options2 => {
-				options2.PayloadSerializerOptions.WriteIndented = false;
+			if (!string.IsNullOrWhiteSpace(options.User)){
+				user = options.User;
+			}
+
+			this.connection = new HubConnectionBuilder().WithUrl(new UriBuilder(appSettings.UseTls ? "https" : "http", host, port, "signal").ToString(), urlOptions =>
+				{
+					if(!string.IsNullOrWhiteSpace(user))
+						urlOptions.AccessTokenProvider = () => Task.FromResult(user);
+				}).WithAutomaticReconnect().AddJsonProtocol(jsonOptions => 
+			{
+				jsonOptions.PayloadSerializerOptions.WriteIndented = false;
 			}).Build();
 
 			this.connection.Closed += async error => {
@@ -44,6 +53,8 @@ namespace Neuralium.Cli.Classes.SignalR {
 			// make sure we can receive events
 			this.RegisterEvents(eventHandler);
 		}
+
+		public string User => this.user;
 
 		public bool IsConnected()
 		{
